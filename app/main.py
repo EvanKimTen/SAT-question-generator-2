@@ -5,7 +5,7 @@ from tortoise import Tortoise
 from tortoise.contrib.fastapi import register_tortoise
 from starlette.middleware.authentication import AuthenticationMiddleware
 
-MODELS = ["app.users.model", "app.reading.model"]
+MODELS = []
 
 Tortoise.init_models(
     MODELS,
@@ -36,7 +36,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-app.add_middleware(AuthenticationMiddleware, backend=AuthBackend())
+# app.add_middleware(AuthenticationMiddleware, backend=AuthBackend())
 
 app.include_router(math_router.router)
 app.include_router(writing_router.router)
