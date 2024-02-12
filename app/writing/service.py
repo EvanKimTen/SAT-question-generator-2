@@ -3,11 +3,15 @@ from fastapi import HTTPException
 from app.writing.schemas import (
     GenerateSimilarQuestionRequest,
     CompleteGeneratedQuestion,
+    CompleteProblemSet,
+    TestQuestionRequest,
+    CompleteTestSet,
 )
 
 from app.writing.utils import generate_sat_question
 
 from typing import List
+import random
 
 def generate_questions(
     data: GenerateSimilarQuestionRequest,
@@ -33,7 +37,7 @@ def generate_questions(
 
 def generate_problem_set(
     data: GenerateSimilarQuestionRequest,
-) -> List[CompleteGeneratedQuestion]:
+) -> List[CompleteProblemSet]:
     question_set = []
     question_count = data.question_count
     for _ in range(question_count):
@@ -42,8 +46,29 @@ def generate_problem_set(
     return question_set
 
 def generate_test(
-    data: GenerateSimilarQuestionRequest,
-) -> List[CompleteGeneratedQuestion]:
+    data: TestQuestionRequest,
+) -> List[CompleteTestSet]:
     test_set = []
+    total_questions = data.question_count
+    category_distribution = {
+        "Craft & Structure" : 0.28,
+        "Information & Ideas": 0.26,
+        "Conventions Of Standard English": 0.26,
+        "Expression of Ideas": 0.20
+    }
+    moduels = supabase.table("test_problems").select("module").
+    for category, ratio in category_distribution.items():
+        num_questions_to_select = round(total_questions * ratio)
+
+        query = f"""
+        SELECT problems.question
+        FROM problems
+        INNER JOIN problem_problem_categories ON problem_problem_categories.category_id = problems.id
+        INNER JOIN problem_categories ON problem_problem_categories.category_id = problem_categories.id
+        WHERE problem_categories.level1 = '{category}'
+        """
+        category_questions = supabase.table("problems").execute_sql(query)
+
+        test_set.extend(random.sample(category_questions, num_questions_to_select))
 
     return test_set

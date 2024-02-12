@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException
-
+from supabase import create_client, Client
 from app.writing.schemas import (
     GenerateSimilarQuestionRequest,
     CompleteGeneratedQuestion,
@@ -8,13 +8,12 @@ from app.writing.schemas import (
     ModelVersion,
 )
 from typing import List
-from supabase import create_client, Client
+
+from app.constants import SUPABASE_URL, SUPABASE_KEY
 
 router = APIRouter(prefix="/writing", tags=["Writing"])
 
 from app.writing import service as writing_service
-SUPABASE_URL: str = "your_supabase_url"
-SUPABASE_KEY: str = "your_supabase_key"
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 @router.post(

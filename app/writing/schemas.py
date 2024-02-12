@@ -12,10 +12,10 @@ class Category(str, Enum):
     SUBJECT_VERB_AGREEMENT = "Subject-Verb Agreement"
     VERB_TENSE = "Verb Tense"
     VERB_FORMS = "Verb Forms"
-    PARALLEL_STRUCTURE = "Parallel Structure"
+    PARALLEL_STRUCTURE = "Parallel Structure" # 1
     SUBJECT_MODIFIER = "Subject-Modifier"
-    TRANSITIONS = "Transitions"
-    ACCOMPLISHING_THE_GOAL = "Accomplishing the Goal"
+    TRANSITIONS = "Transitions" # 4
+    ACCOMPLISHING_THE_GOAL = "Accomplishing the Goal" # 2
 
 
 class QuestionType(str, Enum):
@@ -34,6 +34,12 @@ class GenerateSimilarQuestionRequest(BaseModel):
     question_count: conint(ge=1, le=5) = Field(example=1)
     solution: Optional[str]
 
+class TestQuestionRequest(BaseModel):
+    category: Category
+    example_question: Optional[str]
+    model_version: ModelVersion
+    question_count: conint(ge=1) = Field(example=1)
+    solution: Optional[str]
 
 class GeneratedQuestion(BaseModel):
     question: str
@@ -58,3 +64,9 @@ class CompleteGeneratedQuestion(BaseModel):
     choice_d: str
     correct_choice: str
     solution: str
+
+class CompleteProblemSet(BaseModel):
+    
+
+
+class CompleteTestSet(BaseModel):
