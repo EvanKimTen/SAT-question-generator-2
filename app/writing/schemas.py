@@ -34,12 +34,19 @@ class GenerateSimilarQuestionRequest(BaseModel):
     question_count: conint(ge=1, le=5) = Field(example=1)
     solution: Optional[str]
 
+class Module(str, Enum):
+    INITIAL = "1"
+    NEXT_EASY = "2-easy"
+    NEXT_HARD ="2-hard"
+
 class TestQuestionRequest(BaseModel):
     category: Category
     example_question: Optional[str]
+    module: Module
     model_version: ModelVersion
     question_count: conint(ge=1) = Field(example=1)
     solution: Optional[str]
+
 
 class GeneratedQuestion(BaseModel):
     question: str
