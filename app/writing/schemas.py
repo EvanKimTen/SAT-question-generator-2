@@ -1,7 +1,7 @@
 from pydantic import BaseModel, conint, Field
 from enum import Enum
 from typing import Optional
-
+from tortoise.models import Model
 
 class Category(str, Enum):
     PUNCTUATIONS = "Punctuations"
@@ -26,7 +26,6 @@ class ModelVersion(Enum):
     V1 = "v1"
     V2 = "v2"
     V3 = "v3"
-
 
 class GenerateSimilarQuestionRequest(BaseModel):
     category: Category
