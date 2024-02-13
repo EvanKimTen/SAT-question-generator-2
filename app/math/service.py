@@ -76,10 +76,30 @@ def generate_test_set(
     for module in modules:
         if module == "1":
             category_distribution = {
-                "Algebra" : 0.35,
-                "Advanced Math": 0.35,
-                "Problem Solving and Data Analysis": 0.15,
-                "Geometry and Trigonometry": 0.15
+                "Linear Equations" : 0.07,
+                "Linear Function" : 0.07,
+                "System of Equations" : 0.07,
+                "Solving Inequalities" : 0.07,
+                "Graphing Inequalities" : 0.07,
+                "Absolute Value " : 0.038,
+                "Exponential Equations" : 0.038,
+                "Radical Equation and Function" : 0.038,
+                "Complex Numbers" : 0.038,
+                "Quadratic Equation" : 0.038,
+                "Polynomial Equation" : 0.038,
+                "Rational Equation" : 0.038,
+                "Functions" : 0.038,
+                "Transformation": 0.038,
+                "Ratio, Rate, and Proportion" : 0.0375,
+                "Percentage" : 0.0375,
+                "Probability" :0.0375,
+                "Statistics": 0.0375,
+                "Angles, Triangles, and Polygons" : 0.0375,
+                "Circle" : 0.0375,
+                "Congruence and Similarity of Triangles" : 0.0375,
+                "Polygon in plane / Circle Equation" : 0.0375,
+                "Volume (feat. Surface Area)" : 0.0375,
+                "Trigonometric Ratio" : 0.0375,
             }
             for category, ratio in category_distribution.items():
                 category_questions, num_questions_to_select = randomlySelectProblems(category, ratio, total_questions)
@@ -87,10 +107,30 @@ def generate_test_set(
 
         elif module == "2-easy":
             category_distribution = {
-                "Algebra" : 0.35,
-                "Advanced Math": 0.35,
-                "Problem Solving and Data Analysis": 0.15,
-                "Geometry and Trigonometry": 0.15
+                "Linear Equations" : 0.07,
+                "Linear Function" : 0.07,
+                "System of Equations" : 0.07,
+                "Solving Inequalities" : 0.07,
+                "Graphing Inequalities" : 0.07,
+                "Absolute Value " : 0.038,
+                "Exponential Equations" : 0.038,
+                "Radical Equation and Function" : 0.038,
+                "Complex Numbers" : 0.038,
+                "Quadratic Equation" : 0.038,
+                "Polynomial Equation" : 0.038,
+                "Rational Equation" : 0.038,
+                "Functions" : 0.038,
+                "Transformation": 0.038,
+                "Ratio, Rate, and Proportion" : 0.0375,
+                "Percentage" : 0.0375,
+                "Probability" :0.0375,
+                "Statistics": 0.0375,
+                "Angles, Triangles, and Polygons" : 0.0375,
+                "Circle" : 0.0375,
+                "Congruence and Similarity of Triangles" : 0.0375,
+                "Polygon in plane / Circle Equation" : 0.0375,
+                "Volume (feat. Surface Area)" : 0.0375,
+                "Trigonometric Ratio" : 0.0375,
             }
             for category, ratio in category_distribution.items():
                 category_questions, num_questions_to_select = randomlySelectProblems(category, ratio, total_questions)
@@ -98,10 +138,30 @@ def generate_test_set(
 
         elif module == "2-hard":
             category_distribution = {
-                "Algebra" : 0.35,
-                "Advanced Math": 0.35,
-                "Problem Solving and Data Analysis": 0.15,
-                "Geometry and Trigonometry": 0.15
+                "Linear Equations" : 0.07,
+                "Linear Function" : 0.07,
+                "System of Equations" : 0.07,
+                "Solving Inequalities" : 0.07,
+                "Graphing Inequalities" : 0.07,
+                "Absolute Value " : 0.038,
+                "Exponential Equations" : 0.038,
+                "Radical Equation and Function" : 0.038,
+                "Complex Numbers" : 0.038,
+                "Quadratic Equation" : 0.038,
+                "Polynomial Equation" : 0.038,
+                "Rational Equation" : 0.038,
+                "Functions" : 0.038,
+                "Transformation": 0.038,
+                "Ratio, Rate, and Proportion" : 0.0375,
+                "Percentage" : 0.0375,
+                "Probability" :0.0375,
+                "Statistics": 0.0375,
+                "Angles, Triangles, and Polygons" : 0.0375,
+                "Circle" : 0.0375,
+                "Congruence and Similarity of Triangles" : 0.0375,
+                "Polygon in plane / Circle Equation" : 0.0375,
+                "Volume (feat. Surface Area)" : 0.0375,
+                "Trigonometric Ratio" : 0.0375,
             }
             for category, ratio in category_distribution.items():
                 category_questions, num_questions_to_select = randomlySelectProblems(category, ratio, total_questions)
@@ -115,7 +175,7 @@ def randomlySelectProblems(category, ratio, total_questions):
     FROM problems
     INNER JOIN problem_problem_categories ON problem_problem_categories.category_id = problems.id
     INNER JOIN problem_categories ON problem_problem_categories.category_id = problem_categories.id
-    WHERE problem_categories.level2 = '{category}'
+    WHERE problem_categories.level1 = '{category}'
     """
     category_questions = supabase.table("problems").execute_sql(query)
     return num_questions_to_select, category_questions
