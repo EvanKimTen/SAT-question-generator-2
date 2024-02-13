@@ -56,15 +56,16 @@ def generate_test(
         "Conventions Of Standard English": 0.26,
         "Expression of Ideas": 0.20
     }
-    modules = supabase.table("test_problems").select("module").execute()
+    modules = supabase.table("test_problems").select("module").execute() 
+    # More details needed for getting different module individually.
 
     for module in modules:
         if module == "1":
             category_distribution = {
-                "Craft & Structure" : 0.28,
-                "Information & Ideas": 0.26,
+                "Craft & Structure" : 0.28, #
+                "Relevant Information": 0.26,
                 "Conventions Of Standard English": 0.26,
-                "Expression of Ideas": 0.20
+                "Most Logical Transition": 0.20
             }
             for category, ratio in category_distribution.items():
                 category_questions, num_questions_to_select = randomlySelectProblems(category, ratio, total_questions)
@@ -100,7 +101,7 @@ def randomlySelectProblems(category, ratio, total_questions):
     FROM problems
     INNER JOIN problem_problem_categories ON problem_problem_categories.category_id = problems.id
     INNER JOIN problem_categories ON problem_problem_categories.category_id = problem_categories.id
-    WHERE problem_categories.level1 = '{category}'
+    WHERE problem_categories.level2 = '{category}'
     """
     category_questions = supabase.table("problems").execute_sql(query)
     return num_questions_to_select, category_questions

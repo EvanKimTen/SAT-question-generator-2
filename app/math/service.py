@@ -17,7 +17,7 @@ from app.math.schemas import (
     subcategory_data,
 )
 from typing import List
-
+import random
 
 def generate_questions(
     data: GenerateSimilarQuestionRequest,
@@ -67,13 +67,58 @@ def generate_problem_set(
 def generate_test_set(    
     data: GenerateSimilarQuestionRequest,
 ) -> List[CompleteGeneratedQuestion]:
-    question_count = data.question_count
-    question_set = []
 
-    for _ in range(question_count):
-        question_set.append(data.example_question)
+    test_set = []
+    total_questions = data.question_count
+    modules = supabase.table("test_problems").select("module").execute() 
+    # More details needed for getting different module individually.
 
-    return question_set
+    for module in modules:
+        if module == "1":
+            category_distribution = {
+                "Algebra" : 0.35,
+                "Advanced Math": 0.35,
+                "Problem Solving and Data Analysis": 0.15,
+                "Geometry and Trigonometry": 0.15
+            }
+            for category, ratio in category_distribution.items():
+                category_questions, num_questions_to_select = randomlySelectProblems(category, ratio, total_questions)
+                test_set.extend(random.sample(category_questions, num_questions_to_select))
+
+        elif module == "2-easy":
+            category_distribution = {
+                "Algebra" : 0.35,
+                "Advanced Math": 0.35,
+                "Problem Solving and Data Analysis": 0.15,
+                "Geometry and Trigonometry": 0.15
+            }
+            for category, ratio in category_distribution.items():
+                category_questions, num_questions_to_select = randomlySelectProblems(category, ratio, total_questions)
+                test_set.extend(random.sample(category_questions, num_questions_to_select))
+
+        elif module == "2-hard":
+            category_distribution = {
+                "Algebra" : 0.35,
+                "Advanced Math": 0.35,
+                "Problem Solving and Data Analysis": 0.15,
+                "Geometry and Trigonometry": 0.15
+            }
+            for category, ratio in category_distribution.items():
+                category_questions, num_questions_to_select = randomlySelectProblems(category, ratio, total_questions)
+                test_set.extend(random.sample(category_questions, num_questions_to_select))
+    return test_set
+
+def randomlySelectProblems(category, ratio, total_questions):
+    num_questions_to_select = round(total_questions * ratio)
+    query = f"""
+    SELECT problems.question
+    FROM problems
+    INNER JOIN problem_problem_categories ON problem_problem_categories.category_id = problems.id
+    INNER JOIN problem_categories ON problem_problem_categories.category_id = problem_categories.id
+    WHERE problem_categories.level2 = '{category}'
+    """
+    category_questions = supabase.table("problems").execute_sql(query)
+    return num_questions_to_select, category_questions
 
 def solve_sympy(question: str) -> SympySolvedQuestion:
     sympy_translation = translate_to_sympy(question)

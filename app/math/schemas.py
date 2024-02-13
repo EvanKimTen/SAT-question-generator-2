@@ -11,15 +11,15 @@ class Category(str, Enum):
 
 
 class MajorCategory(str, Enum):
-    LINEAR_EQUATIONS = "Linear Equations"
-    LINEAR_FUNCTION = "Linear Function"
-    SYSTEM_OF_EQUATIONS = "System of Equations"
-    ABSOLUTE_VALUE = "Absolute Value"
-    SOLVING_INEQUALITIES = "Solving Inequalities"
-    GRAPHING_INEQUALITIES = "Graphing Inequalities"
-    EXPONENTIAL_EQUATIONS = "Exponential Equations"
-    EXPONENTIAL_FUNCTION = "Exponential Function"
-    RADICAL_EQUATION_AND_FUNCTION = "Radical Equation and Function"
+    LINEAR_EQUATIONS = "Linear Equations" # 1
+    LINEAR_FUNCTION = "Linear Function" # 1
+    SYSTEM_OF_EQUATIONS = "System of Equations" # 1
+    ABSOLUTE_VALUE = "Absolute Value" #2
+    SOLVING_INEQUALITIES = "Solving Inequalities" # 1
+    GRAPHING_INEQUALITIES = "Graphing Inequalities" # 1
+    EXPONENTIAL_EQUATIONS = "Exponential Equations"#2
+    EXPONENTIAL_FUNCTION = "Exponential Function"#2
+    RADICAL_EQUATION_AND_FUNCTION = "Radical Equation and Function" #2
     COMPLEX_NUMBERS = "Complex Numbers"
     QUADRATIC_EQUATION = "Quadratic Equation"
     QUADRATIC_FUNCTION = "Quadratic Function"
@@ -27,18 +27,18 @@ class MajorCategory(str, Enum):
     POLYNOMIAL_FUNCTION = "Polynomial Function"
     RATIONAL_EQUATION = "Rational Equation"
     RATIONAL_FUNCTION = "Rational Function"
-    FUNCTIONS = "Functions"
-    TRANSFORMATION = "Transformation"
-    RATIO_RATE_PROPORTION = "Ratio, Rate, and Proportion"
-    PERCENTAGE = "Percentage"
-    PROBABILITY = "Probability"
-    STATISTICS = "Statistics"
-    ANGLES_TRIANGLES_POLYGONS = "Angles, Triangles, and Polygons"
-    CIRCLE = "Circle"
-    CONGRUENCE_SIMILARITY_TRIANGLES = "Congruence and Similarity of Triangles"
-    POLYGON_CIRCLE_EQUATION = "Polygon in Plane / Circle Equation"
-    VOLUME_SURFACE_AREA = "Volume (feat. Surface Area)"
-    TRIGONOMETRIC_RATIO = "Trigonometric Ratio"
+    FUNCTIONS = "Functions" #3
+    TRANSFORMATION = "Transformation" #3
+    RATIO_RATE_PROPORTION = "Ratio, Rate, and Proportion" #3
+    PERCENTAGE = "Percentage"#3
+    PROBABILITY = "Probability"#3
+    STATISTICS = "Statistics"#3 
+    ANGLES_TRIANGLES_POLYGONS = "Angles, Triangles, and Polygons"#4
+    CIRCLE = "Circle" #4
+    CONGRUENCE_SIMILARITY_TRIANGLES = "Congruence and Similarity of Triangles"#4
+    POLYGON_CIRCLE_EQUATION = "Polygon in Plane / Circle Equation"#4
+    VOLUME_SURFACE_AREA = "Volume (feat. Surface Area)"#4
+    TRIGONOMETRIC_RATIO = "Trigonometric Ratio"#4
 
 
 class LinearEquationsSubCategory(str, Enum):
