@@ -22,8 +22,6 @@ tortoise = "^0.1.1"
 sympy = "^1.12"
 pinecone-client = "^2.2.2"
 pypdf2 = "^3.0.1"
-tiktoken = "^0.4.0"
-faiss-cpu = "^1.7.4"
 
 [tool.poetry.group.dev.dependencies]
 langchain = "^0.0.191"

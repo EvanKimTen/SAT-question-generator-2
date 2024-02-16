@@ -73,7 +73,7 @@ class CompleteGeneratedQuestion(BaseModel):
     solution: str
 
 class CompleteProblemSet(BaseModel):
-    
+    problems: 
 
 
 class CompleteTestSet(BaseModel):

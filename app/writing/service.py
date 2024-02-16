@@ -38,12 +38,12 @@ def generate_questions(
 def generate_problem_set(
     data: GenerateSimilarQuestionRequest,
 ) -> List[CompleteProblemSet]:
-    question_set = []
-    question_count = data.question_count
-    for _ in range(question_count):
-        question = supabase.table("problems").select("*").eq("question").execute()
-        question_set.append(question)
-    return question_set
+    problem_set = []
+    problem_count = data.question_count
+    for _ in range(problem_count):
+        problem = supabase.table("problems").select("*").eq("question").execute()
+        problem_set.append(problem)
+    return problem_set
 
 def generate_test(
     data: TestQuestionRequest,

@@ -58,8 +58,7 @@ def generate_problem_set(
     question_count = data.question_count
     question_set = []
     for _ in range(question_count):
-        question = supabase.table("problems").select("*").eq("question").execute() # will modify soon once
-        # grasp a gist of the db contents.
+        question = supabase.table("problems").select("*").eq("question").execute()
         question_set.append(question)
 
     return question_set
