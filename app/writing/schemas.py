@@ -1,5 +1,6 @@
 from pydantic import BaseModel, conint, Field
 from enum import Enum
+from datetime import datetime
 from typing import Optional
 from tortoise.models import Model
 
@@ -73,7 +74,10 @@ class CompleteGeneratedQuestion(BaseModel):
     solution: str
 
 class CompleteProblemSet(BaseModel):
-    problems: 
+    created_at: Optional[datetime] = None
+    name: str
+    is_full_test: bool
+
 
 
 class CompleteTestSet(BaseModel):
