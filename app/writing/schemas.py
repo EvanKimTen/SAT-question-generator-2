@@ -3,6 +3,7 @@ from enum import Enum
 from datetime import datetime
 from typing import Optional
 from tortoise.models import Model
+from uuid import UUID
 
 class Category(str, Enum):
     PUNCTUATIONS = "Punctuations"
@@ -35,19 +36,15 @@ class GenerateSimilarQuestionRequest(BaseModel):
     question_count: conint(ge=1, le=5) = Field(example=1)
     solution: Optional[str]
 
+class GenerateTestSetRequest(BaseModel):
+    category: Category
+    example_question: Optional[str]
+    model_version: ModelVersion
+
 class Module(str, Enum):
     INITIAL = "1"
     NEXT_EASY = "2-easy"
     NEXT_HARD ="2-hard"
-
-class TestQuestionRequest(BaseModel):
-    category: Category
-    example_question: Optional[str]
-    module: Module
-    model_version: ModelVersion
-    question_count: conint(ge=1) = Field(example=1)
-    solution: Optional[str]
-
 
 class GeneratedQuestion(BaseModel):
     question: str
@@ -74,10 +71,9 @@ class CompleteGeneratedQuestion(BaseModel):
     solution: str
 
 class CompleteProblemSet(BaseModel):
-    created_at: Optional[datetime] = None
-    name: str
+    set: str
     is_full_test: bool
 
-
-
 class CompleteTestSet(BaseModel):
+    name: str
+    is_full_test: bool

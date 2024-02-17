@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException
 from supabase import create_client, Client
 from app.writing.schemas import (
     GenerateSimilarQuestionRequest,
+    GenerateTestSetRequest,
     CompleteGeneratedQuestion,
     Category,
     QuestionType,
@@ -40,7 +41,7 @@ async def problem_set_generation(
     "/test_generation", response_model=List[CompleteGeneratedQuestion]
 ) 
 async def test_generation(
-    request: GenerateSimilarQuestionRequest,
+    request: GenerateTestSetRequest,
     # current_user = Depends(get_current_user_authorizer()),
 ): # parameter: undecided.
     result = writing_service.generate_test(request)

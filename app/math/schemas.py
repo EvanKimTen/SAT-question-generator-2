@@ -278,6 +278,10 @@ class GenerateSimilarQuestionRequest(BaseModel):
     question_count: conint(ge=1, le=5) = Field(example=1)
     solution: Optional[str]
 
+class GenerateTestSetRequest(BaseModel):
+    category: Category
+    example_question: Optional[str]
+    model_version: ModelVersion
 
 class GeneratedQuestion(BaseModel):
     question: str
@@ -302,6 +306,14 @@ class CompleteGeneratedQuestion(BaseModel):
     choice_d: str
     correct_choice: str
     solution: str
+    
+class CompleteProblemSet(BaseModel):
+    set: str
+    is_full_test: bool
+
+class CompleteTestSet(BaseModel):
+    name: str
+    is_full_test: bool
 
 
 class SolveQuestionSympyRequest(BaseModel):

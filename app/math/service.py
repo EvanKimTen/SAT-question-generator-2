@@ -10,6 +10,8 @@ from app.math.utils import (
 from app.math.schemas import (
     GenerateSimilarQuestionRequest,
     CompleteGeneratedQuestion,
+    CompleteProblemSet,
+    CompleteTestSet,
     MajorCategory,
     QuestionType,
     ModelVersion,
@@ -54,7 +56,7 @@ def generate_questions(
 
 def generate_problem_set(    
     data: GenerateSimilarQuestionRequest,
-) -> List[CompleteGeneratedQuestion]:
+) -> List[CompleteProblemSet]:
     question_count = data.question_count
     question_set = []
     for _ in range(question_count):
@@ -65,7 +67,7 @@ def generate_problem_set(
 
 def generate_test_set(    
     data: GenerateSimilarQuestionRequest,
-) -> List[CompleteGeneratedQuestion]:
+) -> List[CompleteTestSet]:
 
     test_set = []
     total_questions = data.question_count
