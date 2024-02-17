@@ -1,10 +1,10 @@
-from writing.router import supabase
 from fastapi import HTTPException
+from supabase import create_client, Client
 from app.writing.schemas import (
     GenerateSimilarQuestionRequest,
+    GenerateTestSetRequest,
     CompleteGeneratedQuestion,
     CompleteProblemSet,
-    TestQuestionRequest,
     CompleteTestSet,
 )
 
@@ -15,6 +15,7 @@ import random
 
 def generate_questions(
     data: GenerateSimilarQuestionRequest,
+    supabase_exp: Client
 ) -> List[CompleteGeneratedQuestion]:
 # process parameter to send back in the form of CompleteGeneratedQuestion.
     question_count = data.question_count
@@ -28,7 +29,7 @@ def generate_questions(
         complete_generated_question = CompleteGeneratedQuestion.parse_obj(
             generated_question.dict()
         )
-        supabase.table("problems").insert(generated_question).execute()
+        supabase_exp.table("problems").insert(generated_question).execute()
         if generated_question.error:
             raise HTTPException(status_code=400, detail=generated_question.error.message)
         generated_questions.append(complete_generated_question)
@@ -37,35 +38,40 @@ def generate_questions(
 
 def generate_problem_set(
     data: GenerateSimilarQuestionRequest,
+    supabase_exp: Client
 ) -> List[CompleteProblemSet]:
     problem_set = []
     problem_count = data.question_count
     for _ in range(problem_count):
-        problem = supabase.table("problems").select("*").eq("question").execute()
+        problem = supabase_exp.table("problems").select("*").eq("question").execute()
         problem_set.append(problem)
     return problem_set
 
 def generate_test(
-    data: TestQuestionRequest,
+    data: GenerateTestSetRequest,
+    supabase_exp: Client
 ) -> List[CompleteTestSet]:
     test_set = []
     total_questions = data.question_count
-    category_distribution = {
-        "Craft & Structure" : 0.28,
-        "Information & Ideas": 0.26,
-        "Conventions Of Standard English": 0.26,
-        "Expression of Ideas": 0.20
-    }
-    modules = supabase.table("test_problems").select("module").execute() 
+
+    modules = supabase_exp.table("test_problems").select("module").execute() 
     # More details needed for getting different module individually.
 
     for module in modules:
         if module == "1":
             category_distribution = {
                 "Craft & Structure" : 0.28, #
-                "Relevant Information": 0.26,
-                "Conventions Of Standard English": 0.26,
-                "Most Logical Transition": 0.20
+                "Accomplishing the Goal": 0.26,
+                "Subject-verb Agreement": 0.0325,
+                "Pronoun-Antecedent Agreement": 0.0325,
+                "Verb forms - Tense": 0.0325,
+                "Verb forms - Finite vs. Non-finite": 0.0325,
+                "Subject-Modifier Placement": 0.0325,
+                "Plural and possessive nouns": 0.0325,
+                "Linking clauses": 0.0325,
+                "Supplements": 0.0325,
+                "Punctuations": 0.0325,        
+                "Transitions": 0.20
             }
             for category, ratio in category_distribution.items():
                 category_questions, num_questions_to_select = randomlySelectProblems(category, ratio, total_questions)
@@ -73,10 +79,18 @@ def generate_test(
 
         elif module == "2-easy":
             category_distribution = {
-                "Craft & Structure" : 0.28,
-                "Information & Ideas": 0.26,
-                "Conventions Of Standard English": 0.26,
-                "Expression of Ideas": 0.20
+                "Craft & Structure" : 0.28, #
+                "Accomplishing the Goal": 0.26,
+                "Subject-verb Agreement": 0.0325,
+                "Pronoun-Antecedent Agreement": 0.0325,
+                "Verb forms - Tense": 0.0325,
+                "Verb forms - Finite vs. Non-finite": 0.0325,
+                "Subject-Modifier Placement": 0.0325,
+                "Plural and possessive nouns": 0.0325,
+                "Linking clauses": 0.0325,
+                "Supplements": 0.0325,
+                "Punctuations": 0.0325,        
+                "Transitions": 0.20
             }
             for category, ratio in category_distribution.items():
                 category_questions, num_questions_to_select = randomlySelectProblems(category, ratio, total_questions)
@@ -84,10 +98,18 @@ def generate_test(
 
         elif module == "2-hard":
             category_distribution = {
-                "Craft & Structure" : 0.28,
-                "Information & Ideas": 0.26,
-                "Conventions Of Standard English": 0.26,
-                "Expression of Ideas": 0.20
+                "Craft & Structure" : 0.28, #
+                "Accomplishing the Goal": 0.26,
+                "Subject-verb Agreement": 0.0325,
+                "Pronoun-Antecedent Agreement": 0.0325,
+                "Verb forms - Tense": 0.0325,
+                "Verb forms - Finite vs. Non-finite": 0.0325,
+                "Subject-Modifier Placement": 0.0325,
+                "Plural and possessive nouns": 0.0325,
+                "Linking clauses": 0.0325,
+                "Supplements": 0.0325,
+                "Punctuations": 0.0325,        
+                "Transitions": 0.20
             }
             for category, ratio in category_distribution.items():
                 category_questions, num_questions_to_select = randomlySelectProblems(category, ratio, total_questions)
@@ -101,9 +123,9 @@ def randomlySelectProblems(category, ratio, total_questions):
     FROM problems
     INNER JOIN problem_problem_categories ON problem_problem_categories.category_id = problems.id
     INNER JOIN problem_categories ON problem_problem_categories.category_id = problem_categories.id
-    WHERE problem_categories.level2 = '{category}'
+    WHERE problem_categories.level1 = '{category}'
     """
-    category_questions = supabase.table("problems").execute_sql(query)
+    category_questions = supabase_exp.table("problems").execute_sql(query)
     return num_questions_to_select, category_questions
 
     

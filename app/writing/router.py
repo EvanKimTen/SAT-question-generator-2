@@ -15,7 +15,8 @@ from app.constants import SUPABASE_URL, SUPABASE_KEY
 router = APIRouter(prefix="/writing", tags=["Writing"])
 
 from app.writing import service as writing_service
-supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+
+supabase_exp: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 @router.post(
     "/problem_generation", response_model=List[CompleteGeneratedQuestion]
@@ -24,7 +25,7 @@ async def generate_similar_question(
     request: GenerateSimilarQuestionRequest,
     # current_user = Depends(get_current_user_authorizer()),
 ):
-    results = writing_service.generate_questions(request)
+    results = writing_service.generate_questions(request, supabase_exp)
     return results
 
     
@@ -34,7 +35,7 @@ async def generate_similar_question(
 async def problem_set_generation(
     request: GenerateSimilarQuestionRequest,
 ):
-    result = writing_service.generate_problem_set(request)
+    result = writing_service.generate_problem_set(request, supabase_exp)
     return result
 
 @router.post(
@@ -44,5 +45,5 @@ async def test_generation(
     request: GenerateTestSetRequest,
     # current_user = Depends(get_current_user_authorizer()),
 ): # parameter: undecided.
-    result = writing_service.generate_test(request)
+    result = writing_service.generate_test(request, supabase_exp)
     return result

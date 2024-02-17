@@ -39,6 +39,7 @@ class GenerateSimilarQuestionRequest(BaseModel):
 class GenerateTestSetRequest(BaseModel):
     category: Category
     example_question: Optional[str]
+    question_count: conint(ge=1, le=5) = Field(example=1)
     model_version: ModelVersion
 
 class Module(str, Enum):

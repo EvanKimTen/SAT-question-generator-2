@@ -1,4 +1,4 @@
-from math.router import supabase
+from supabase import Client
 from fastapi import HTTPException
 from app.math.utils import (
     generate_sat_question,
@@ -9,6 +9,7 @@ from app.math.utils import (
 )
 from app.math.schemas import (
     GenerateSimilarQuestionRequest,
+    GenerateTestSetRequest,
     CompleteGeneratedQuestion,
     CompleteProblemSet,
     CompleteTestSet,
@@ -23,6 +24,7 @@ import random
 
 def generate_questions(
     data: GenerateSimilarQuestionRequest,
+    supabase_exp: Client
 ) -> List[CompleteGeneratedQuestion]:
     question_count = data.question_count
     generated_questions = []
@@ -47,7 +49,7 @@ def generate_questions(
         complete_generated_question = CompleteGeneratedQuestion.parse_obj(
             complete_generated_question_data
         )
-        supabase.table("problems").insert(complete_generated_question).execute()
+        supabase_exp.table("problems").insert(complete_generated_question).execute()
         if complete_generated_question.error:
             raise HTTPException(status_code=400, detail=generated_question.error.message)
         generated_questions.append(complete_generated_question)
@@ -56,22 +58,24 @@ def generate_questions(
 
 def generate_problem_set(    
     data: GenerateSimilarQuestionRequest,
+    supabase_exp: Client
 ) -> List[CompleteProblemSet]:
     question_count = data.question_count
     question_set = []
     for _ in range(question_count):
-        question = supabase.table("problems").select("*").eq("question").execute()
+        question = supabase_exp.table("problems").select("*").eq("question").execute()
         question_set.append(question)
 
     return question_set
 
 def generate_test_set(    
-    data: GenerateSimilarQuestionRequest,
+    data: GenerateTestSetRequest,
+    supabase_exp: Client
 ) -> List[CompleteTestSet]:
 
     test_set = []
     total_questions = data.question_count
-    modules = supabase.table("test_problems").select("module").execute() 
+    modules = supabase_exp.table("test_problems").select("module").execute() 
     # More details needed for getting different module individually.
 
     for module in modules:
@@ -178,7 +182,7 @@ def randomlySelectProblems(category, ratio, total_questions):
     INNER JOIN problem_categories ON problem_problem_categories.category_id = problem_categories.id
     WHERE problem_categories.level1 = '{category}'
     """
-    category_questions = supabase.table("problems").execute_sql(query)
+    category_questions = supabase_exp.table("problems").execute_sql(query)
     return num_questions_to_select, category_questions
 
 def solve_sympy(question: str) -> SympySolvedQuestion:
