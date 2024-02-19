@@ -282,6 +282,7 @@ class GenerateTestSetRequest(BaseModel):
     category: Category
     example_question: Optional[str]
     model_version: ModelVersion
+    question_count: conint(ge=1) = Field(example=1)
 
 class GeneratedQuestion(BaseModel):
     question: str
@@ -289,23 +290,23 @@ class GeneratedQuestion(BaseModel):
 
 
 class SolutionWithChoices(BaseModel):
-    choice_a: str
-    choice_b: str
-    choice_c: str
-    choice_d: str
-    correct_choice: str
-    solution: str
+    choice_a: Optional[str]
+    choice_b: Optional[str]
+    choice_c: Optional[str]
+    choice_d: Optional[str]
+    correct_choice: Optional[str]
+    solution: Optional[str]
 
 
 class CompleteGeneratedQuestion(BaseModel):
     question: str
     type: QuestionType
-    choice_a: str
-    choice_b: str
-    choice_c: str
-    choice_d: str
-    correct_choice: str
-    solution: str
+    choice_a: Optional[str]
+    choice_b: Optional[str]
+    choice_c: Optional[str]
+    choice_d: Optional[str]
+    correct_choice: Optional[str]
+    solution: Optional[str]
     
 class CompleteProblemSet(BaseModel):
     set: str

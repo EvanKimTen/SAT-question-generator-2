@@ -12,6 +12,7 @@ from app.writing.utils import generate_sat_question
 
 from typing import List
 import random
+import json
 
 def generate_questions(
     data: GenerateSimilarQuestionRequest,
@@ -27,11 +28,13 @@ def generate_questions(
             example_question=data.example_question,
         )
         complete_generated_question = CompleteGeneratedQuestion.parse_obj(
-            generated_question.dict()
+            generated_question
         )
-        supabase_exp.table("problems").insert(generated_question).execute()
-        if generated_question.error:
-            raise HTTPException(status_code=400, detail=generated_question.error.message)
+        complete_generated_question_dict = complete_generated_question.dict()
+        complete_generated_question_json = json.dumps(complete_generated_question_dict)
+        supabase_exp.table("problems").insert(complete_generated_question_json).execute()
+        # if generated_question.error:
+        #     raise HTTPException(status_code=400, detail=generated_question.error.message)
         generated_questions.append(complete_generated_question)
 
     return generated_questions
@@ -42,9 +45,13 @@ def generate_problem_set(
 ) -> List[CompleteProblemSet]:
     problem_set = []
     problem_count = data.question_count
-    for _ in range(problem_count):
-        problem = supabase_exp.table("problems").select("*").eq("question").execute()
+    count = 0
+    problems = supabase_exp.table("problems").select("question").execute()
+    for problem in problems:
+        if problem_count == count: 
+            break
         problem_set.append(problem)
+        count += 1
     return problem_set
 
 def generate_test(

@@ -21,6 +21,7 @@ from app.math.schemas import (
 )
 from typing import List
 import random
+import json
 
 def generate_questions(
     data: GenerateSimilarQuestionRequest,
@@ -49,23 +50,39 @@ def generate_questions(
         complete_generated_question = CompleteGeneratedQuestion.parse_obj(
             complete_generated_question_data
         )
-        supabase_exp.table("problems").insert(complete_generated_question).execute()
-        if complete_generated_question.error:
-            raise HTTPException(status_code=400, detail=generated_question.error.message)
+
+        # Convert the Pydantic model to a dictionary
+        complete_generated_question_dict = complete_generated_question.dict()
+
+        # Serialize the dictionary to a JSON string
+        complete_generated_question_json = json.dumps(complete_generated_question_dict)
+        supabase_exp.table("problems").insert(complete_generated_question_json).execute()
+        # if complete_generated_question.error:
+        #     raise HTTPException(status_code=400, detail=generated_question.error.message)
         generated_questions.append(complete_generated_question)
 
-    return generated_questions
+    return generated_questions # return type: list of an instance of completeGeneratedQuestions.
 
 def generate_problem_set(    
     data: GenerateSimilarQuestionRequest,
     supabase_exp: Client
-) -> List[CompleteProblemSet]:
-    question_count = data.question_count
+):
+    problem_count = data.question_count
     question_set = []
-    for _ in range(question_count):
-        question = supabase_exp.table("problems").select("*").eq("question").execute()
-        question_set.append(question)
-
+    problems = supabase_exp.table("problems").select("question").execute()
+    count = 0
+    for problem in problems:
+        if problem_count == count: 
+            break
+        question_set.append(problem)
+        count += 1
+        # complete_generated_question_data = {
+        #     **generated_question.dict(),
+        #     **solution_with_choices.dict(),
+        # }
+        # complete_generated_question = CompleteGeneratedQuestion.parse_obj(
+        #     complete_generated_question_data
+        # )
     return question_set
 
 def generate_test_set(    
