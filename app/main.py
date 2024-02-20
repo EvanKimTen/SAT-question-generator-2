@@ -1,26 +1,15 @@
 import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from tortoise import Tortoise
-from tortoise.contrib.fastapi import register_tortoise
-from starlette.middleware.authentication import AuthenticationMiddleware
-
-MODELS = []
-
-Tortoise.init_models(
-    MODELS,
-    "models",
-)
-
 
 from .math import router as math_router
 from .writing import router as writing_router
-# from .reading import router as reading_router
+from .reading import router as reading_router
 
 
 tags_metadata = [
     {"name": "Math", "description": "math"},
-    # {"name": "Reading", "description": "reading"},
+    {"name": "Reading", "description": "reading"},
     {"name": "Writing", "description": "writing"},
 ]
 
@@ -40,15 +29,7 @@ app.add_middleware(
 
 app.include_router(math_router.router)
 app.include_router(writing_router.router)
-# app.include_router(reading_router.router)
-
-register_tortoise(
-    app,
-    db_url="sqlite://db/db.sqlite3",
-    modules={"models": MODELS},
-    generate_schemas=True,
-    add_exception_handlers=True,
-)
+app.include_router(reading_router.router)
 
 
 if __name__ == "__main__":

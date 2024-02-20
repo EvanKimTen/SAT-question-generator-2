@@ -1,12 +1,9 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter
 from supabase import create_client, Client
 from app.writing.schemas import (
     GenerateSimilarQuestionRequest,
     GenerateTestSetRequest,
     CompleteGeneratedQuestion,
-    Category,
-    QuestionType,
-    ModelVersion,
 )
 from typing import List
 
