@@ -1,9 +1,7 @@
 from pydantic import BaseModel, conint, Field
 from enum import Enum
-from datetime import datetime
 from typing import Optional
-from tortoise.models import Model
-from uuid import UUID
+
 
 class Category(str, Enum):
     PUNCTUATIONS = "Punctuations"
