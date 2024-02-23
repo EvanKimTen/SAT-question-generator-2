@@ -17,13 +17,15 @@ from app.constants import OPENAI_API_KEY, SUPABASE_URL, SUPABASE_KEY
 from typing import List
 import random
 from supabase import create_client, Client
+import json
 
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 
-model_name = "gpt-3.5-turbo-16k-0613"
+# model_name = "gpt-3.5-turbo-16k-0613"
+model_name = "gpt-4-turbo-preview"
 chat_model = ChatOpenAI(
-    model_name=model_name, openai_api_key=OPENAI_API_KEY, max_tokens=2000
+    model_name=model_name, openai_api_key=OPENAI_API_KEY, max_tokens=2000, model_kwargs={"response_format":{ "type": "json_object" }},
 )
 embeddings = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
 
@@ -86,8 +88,7 @@ def generate_sat_question(
             passage=selected_passage
         )
         output = chat_model(_input.to_messages())
-        selected_passage = output.content
-
+        selected_passage = json.loads(output.content)["preprocessed_passage"]
     _input = get_template(category).format_prompt(
         category=category,
         example_question=example_question,

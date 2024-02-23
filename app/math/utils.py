@@ -23,9 +23,11 @@ from app.math.schemas import (
 from app.constants import OPENAI_API_KEY
 from sympy import *
 
-model_name = "gpt-3.5-turbo-0613"
+# only below two models are supported for json response
+# model_name = "gpt-3.5-turbo-0125"
+model_name = "gpt-4-turbo-preview"
 chat_model = ChatOpenAI(
-    model_name=model_name, openai_api_key=OPENAI_API_KEY, max_tokens=1000
+    model_name=model_name, openai_api_key=OPENAI_API_KEY, max_tokens=1000, model_kwargs={"response_format":{ "type": "json_object" }},
 )
 
 

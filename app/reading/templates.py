@@ -1,6 +1,6 @@
 from langchain.prompts import ChatPromptTemplate, HumanMessagePromptTemplate
 from langchain.prompts.prompt import PromptTemplate
-from app.reading.parsers import generated_question_parser
+from app.reading.parsers import generated_question_parser, preprocessed_passage_parser
 from app.reading.schemas import Category
 from app.reading.prompts import (
     function_lit,
@@ -39,5 +39,6 @@ json_format_fix_prompt = PromptTemplate.from_template(
 )
 
 function_category_preprocess_prompt = PromptTemplate.from_template(
-    function_category_preprocess.FUNCTION_CATEGORY_PREPROCESS_PROMPT
+    function_category_preprocess.FUNCTION_CATEGORY_PREPROCESS_PROMPT,
+    partial_variables={"format_instructions": preprocessed_passage_parser.get_format_instructions()},
 )

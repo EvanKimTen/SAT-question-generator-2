@@ -59,3 +59,6 @@ class CompleteGeneratedQuestion(BaseModel):
     choice_d: str
     correct_choice: str
     solution: str
+
+class PreprocessedPassage(BaseModel):
+    preprocessed_passage: str

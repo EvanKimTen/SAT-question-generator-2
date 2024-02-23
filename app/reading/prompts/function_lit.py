@@ -139,7 +139,7 @@ Selected Passage from {source_title}:
 {selected_passage}
 ```
 
-Ouput Format:
+Ouput Format in json:
 {format_instructions}
 
 New Question:

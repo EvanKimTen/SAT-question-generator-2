@@ -8,6 +8,10 @@ I need you to revise this passage with the following criteria:
 2. If there are any instances of an em dash in the passage (this symbol: -), please replace it with an '—' instead.
 
 Please edit the passage accordingly and provide me with the revised version.
+
+format instructions:
+{format_instructions}
+
 Passage 
 {passage}
 """

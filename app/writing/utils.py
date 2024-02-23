@@ -9,9 +9,11 @@ from app.constants import OPENAI_API_KEY
 
 import json
 
-model_name = "gpt-3.5-turbo-0613"
+# only below two models are supported for json response
+# model_name = "gpt-3.5-turbo-0125"
+model_name = "gpt-4-turbo-preview"
 chat_model = ChatOpenAI(
-    model_name=model_name, openai_api_key=OPENAI_API_KEY, max_tokens=1000
+    model_name=model_name, openai_api_key=OPENAI_API_KEY, max_tokens=1000, model_kwargs={"response_format":{ "type": "json_object" }},
 )
 
 
@@ -30,10 +32,11 @@ def generate_sat_question(
         example_question=example_question,
     )
     output = chat_model(_input.to_messages())
-    output = convert_ai_message_to_dict(output)
-    print(output)
-    print(type(output.content))
-    print(type(output))
+    print(output.content)
+    # output = convert_ai_message_to_dict(output)
+    # print(output)
+    # print(type(output.content))
+    # print(type(output))
     res = complete_generated_question_parser.parse(output.content)
     return res
 
