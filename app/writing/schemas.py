@@ -70,9 +70,9 @@ class CompleteGeneratedQuestion(BaseModel):
     solution: Optional[str]
 
 class CompleteProblemSet(BaseModel):
-    set: str
-    is_full_test: bool
+    question: str
+    explanation: str
 
 class CompleteTestSet(BaseModel):
-    name: str
-    is_full_test: bool
+    question: str
+    explanation: str

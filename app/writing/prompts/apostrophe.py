@@ -1,6 +1,5 @@
-generate_prompt = f"""
+generate_prompt = """
 Generate one SAT-style question that require an understanding of the use of apostrophes. 
-
 
 For instance:
 "
@@ -27,19 +26,19 @@ Passage:
 Question: 
 Fill in the blank with the correct phrase:
 
-A) grain’s physical properties’
-B) grains’ physical properties
-C) grains’ physical property’s
+A) grain's physical properties'
+B) grains' physical properties
+C) grains' physical property's
 D) grains physical properties
 
 Correct Answer: 
-B) grains’ physical properties
+B) grains' physical properties
 
 Explanation:
-The correct form is "grains’ physical properties" because we are talking about the properties of separate snow grains, which is indicated by the term "individual" in the passage. The apostrophe in "grains’" indicates possession, showing that the properties belong to the grains. There's no need for an apostrophe after "properties".
+The correct form is "grains' physical properties" because we are talking about the properties of separate snow grains, which is indicated by the term "individual" in the passage. The apostrophe in "grains'" indicates possession, showing that the properties belong to the grains. There's no need for an apostrophe after "properties".
 
 Passage:
-"In his groundbreaking book $\textit{{Bengali Harlem and the Lost Histories of South Asian America}}$, Vivek Bald uses newspaper articles, census records, ships’ logs, and memoirs to tell the ______ who made New York City their home in the early twentieth century."
+"In his groundbreaking book $\textit{{Bengali Harlem and the Lost Histories of South Asian America}}$, Vivek Bald uses newspaper articles, census records, ships' logs, and memoirs to tell the ______ who made New York City their home in the early twentieth century."
 
 Question: 
 Fill in the blank with the correct phrase:
@@ -55,9 +54,8 @@ C) stories of the South Asian immigrants
 Explanation:
 The correct form is "stories of the South Asian immigrants". The word "of" indicates possession here, so no apostrophe is needed. We're talking about multiple stories of multiple immigrants, so "stories" and "immigrants" should both be plural. 
 
-
 Passage:
-"In Death Valley National Park’s Racetrack Playa, a flat, dry lakebed, are 162 rocks$\text{{\textemdash}}$some weighing less than a pound but others almost 700 pounds$\text{{\textemdash}}$that move periodically from place to place, seemingly of their own volition. Racetrack-like trails in the ______ mysterious migration."
+"In Death Valley National Park's Racetrack Playa, a flat, dry lakebed, are 162 rocks$\text{{\textemdash}}$some weighing less than a pound but others almost 700 pounds$\text{{\textemdash}}$that move periodically from place to place, seemingly of their own volition. Racetrack-like trails in the ______ mysterious migration."
 
 Question: 
 Fill in the blank with the correct phrase:
@@ -73,8 +71,8 @@ C) playa's sediment mark the rocks'
 Explanation: 
 The correct form is "playa's sediment mark the rocks'". There are two separate possessions in this sentence: the sediment of the playa, and the migration of the rocks. The word "playa's" indicates the sediment belongs to the playa, and the word "rocks'" indicates the migration belongs to the rocks.
 
+{example_question}
 "
-{{example_question}}
 
 
 Use the following guidelines:
@@ -92,7 +90,7 @@ The aim of these questions is to test the student's ability to understand the nu
 Bear in mind that the word "of" also indicates possession and in that case, no apostrophe is needed. Also, if the passage is not discussing possession, none of the words should have an apostrophe.
 
 Ouput Format:
-# {{format_instructions}}
+{format_instructions}
 
 New Question:
 """

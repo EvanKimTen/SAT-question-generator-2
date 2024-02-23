@@ -43,15 +43,20 @@ def generate_problem_set(
     data: GenerateSimilarQuestionRequest,
     supabase_exp: Client
 ) -> List[CompleteProblemSet]:
-    problem_set = []
     problem_count = data.question_count
+    problem_set = []
+    problems = supabase_exp.table("problems").select("question, explanation").execute()
     count = 0
-    problems = supabase_exp.table("problems").select("question").execute()
-    for problem in problems:
-        if problem_count == count: 
+    for extractor in problems:
+        if extractor is None:
             break
-        problem_set.append(problem)
-        count += 1
+        sep_problems = extractor[1]
+        if sep_problems is not None:
+            for problem in sep_problems:
+                if problem_count == count: 
+                    break
+                problem_set.append(problem)
+                count += 1
     return problem_set
 
 def generate_test(
@@ -61,69 +66,74 @@ def generate_test(
     test_set = []
     total_questions = data.question_count
 
-    modules = supabase_exp.table("test_problems").select("module").execute() 
+    extracted = supabase_exp.table("test_problems").select("module").execute() 
     # More details needed for getting different module individually.
 
-    for module in modules:
-        if module == "1":
-            category_distribution = {
-                "Craft & Structure" : 0.28, #
-                "Accomplishing the Goal": 0.26,
-                "Subject-verb Agreement": 0.0325,
-                "Pronoun-Antecedent Agreement": 0.0325,
-                "Verb forms - Tense": 0.0325,
-                "Verb forms - Finite vs. Non-finite": 0.0325,
-                "Subject-Modifier Placement": 0.0325,
-                "Plural and possessive nouns": 0.0325,
-                "Linking clauses": 0.0325,
-                "Supplements": 0.0325,
-                "Punctuations": 0.0325,        
-                "Transitions": 0.20
-            }
-            for category, ratio in category_distribution.items():
-                category_questions, num_questions_to_select = randomlySelectProblems(category, ratio, total_questions)
-                test_set.extend(random.sample(category_questions, num_questions_to_select))
+    for extractor in extracted:
+        if extractor is None:
+            break
+        modules = extractor[1]
+        if modules is not None:
+            for module in modules:
+                if module['module'] == '1':
+                        category_distribution = {
+                            "Craft & Structure" : 0.28,
+                            "Accomplishing the Goal": 0.26,
+                            "Subject-verb Agreement": 0.0325,
+                            "Pronoun-Antecedent Agreement": 0.0325,
+                            "Verb forms - Tense": 0.0325,
+                            "Verb forms - Finite vs. Non-finite": 0.0325,
+                            "Subject-Modifier Placement": 0.0325,
+                            "Plural and possessive nouns": 0.0325,
+                            "Linking clauses": 0.0325,
+                            "Supplements": 0.0325,
+                            "Punctuations": 0.0325,        
+                            "Transitions": 0.20
+                        }
+                        for category, ratio in category_distribution.items():
+                            category_questions, num_questions_to_select = randomlySelectProblems(category, ratio, total_questions)
+                            test_set.extend(random.sample(category_questions, num_questions_to_select))
 
-        elif module == "2-easy":
-            category_distribution = {
-                "Craft & Structure" : 0.28, #
-                "Accomplishing the Goal": 0.26,
-                "Subject-verb Agreement": 0.0325,
-                "Pronoun-Antecedent Agreement": 0.0325,
-                "Verb forms - Tense": 0.0325,
-                "Verb forms - Finite vs. Non-finite": 0.0325,
-                "Subject-Modifier Placement": 0.0325,
-                "Plural and possessive nouns": 0.0325,
-                "Linking clauses": 0.0325,
-                "Supplements": 0.0325,
-                "Punctuations": 0.0325,        
-                "Transitions": 0.20
-            }
-            for category, ratio in category_distribution.items():
-                category_questions, num_questions_to_select = randomlySelectProblems(category, ratio, total_questions)
-                test_set.extend(random.sample(category_questions, num_questions_to_select))
+                elif module == "2-easy":
+                    category_distribution = {
+                        "Craft & Structure" : 0.28, #
+                        "Accomplishing the Goal": 0.26,
+                        "Subject-verb Agreement": 0.0325,
+                        "Pronoun-Antecedent Agreement": 0.0325,
+                        "Verb forms - Tense": 0.0325,
+                        "Verb forms - Finite vs. Non-finite": 0.0325,
+                        "Subject-Modifier Placement": 0.0325,
+                        "Plural and possessive nouns": 0.0325,
+                        "Linking clauses": 0.0325,
+                        "Supplements": 0.0325,
+                        "Punctuations": 0.0325,        
+                        "Transitions": 0.20
+                    }
+                    for category, ratio in category_distribution.items():
+                        category_questions, num_questions_to_select = randomlySelectProblems(category, ratio, total_questions)
+                        test_set.extend(random.sample(category_questions, num_questions_to_select))
 
-        elif module == "2-hard":
-            category_distribution = {
-                "Craft & Structure" : 0.28, #
-                "Accomplishing the Goal": 0.26,
-                "Subject-verb Agreement": 0.0325,
-                "Pronoun-Antecedent Agreement": 0.0325,
-                "Verb forms - Tense": 0.0325,
-                "Verb forms - Finite vs. Non-finite": 0.0325,
-                "Subject-Modifier Placement": 0.0325,
-                "Plural and possessive nouns": 0.0325,
-                "Linking clauses": 0.0325,
-                "Supplements": 0.0325,
-                "Punctuations": 0.0325,        
-                "Transitions": 0.20
-            }
-            for category, ratio in category_distribution.items():
-                category_questions, num_questions_to_select = randomlySelectProblems(category, ratio, total_questions)
-                test_set.extend(random.sample(category_questions, num_questions_to_select))
-    return test_set
+                elif module == "2-hard":
+                    category_distribution = {
+                        "Craft & Structure" : 0.28, #
+                        "Accomplishing the Goal": 0.26,
+                        "Subject-verb Agreement": 0.0325,
+                        "Pronoun-Antecedent Agreement": 0.0325,
+                        "Verb forms - Tense": 0.0325,
+                        "Verb forms - Finite vs. Non-finite": 0.0325,
+                        "Subject-Modifier Placement": 0.0325,
+                        "Plural and possessive nouns": 0.0325,
+                        "Linking clauses": 0.0325,
+                        "Supplements": 0.0325,
+                        "Punctuations": 0.0325,        
+                        "Transitions": 0.20
+                    }
+                    for category, ratio in category_distribution.items():
+                        category_questions, num_questions_to_select = randomlySelectProblems(category, ratio, total_questions)
+                        test_set.extend(random.sample(category_questions, num_questions_to_select))
+    return []
 
-def randomlySelectProblems(category, ratio, total_questions):
+def randomlySelectProblems(category, ratio, total_questions, supabase_exp):
     num_questions_to_select = round(total_questions * ratio)
     query = f"""
     SELECT problems.question
@@ -133,6 +143,7 @@ def randomlySelectProblems(category, ratio, total_questions):
     WHERE problem_categories.level1 = '{category}'
     """
     category_questions = supabase_exp.table("problems").execute_sql(query)
+    
     return num_questions_to_select, category_questions
 
     
