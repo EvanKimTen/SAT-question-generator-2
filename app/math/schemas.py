@@ -308,9 +308,10 @@ class CompleteGeneratedQuestion(BaseModel):
     correct_choice: Optional[str]
     solution: Optional[str]
     
-class CompleteProblemSet(BaseModel):
-    set: str
-    is_full_test: bool
+class ProblemInsideSet(BaseModel):
+    question: str
+    explanation: str
+
 
 class CompleteTestSet(BaseModel):
     name: str

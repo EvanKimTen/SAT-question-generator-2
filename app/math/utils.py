@@ -60,7 +60,9 @@ def solve_question(example_question: str, question_type: QuestionType):
     _input = solve_question_template.format_prompt(
         example_question=example_question, question_type=question_type
     )
+    print(_input)
     output = chat_model(_input.to_messages())
+    print(output) # In some cases, chat_model can't generate choices through the chat model.
     res = solution_with_choices_parser.parse(output.content)
     return res
 

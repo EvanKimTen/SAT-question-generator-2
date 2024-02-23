@@ -1,9 +1,7 @@
 from pydantic import BaseModel, conint, Field
 from enum import Enum
-from datetime import datetime
 from typing import Optional
-from tortoise.models import Model
-from uuid import UUID
+
 
 class Category(str, Enum):
     PUNCTUATIONS = "Punctuations"
@@ -72,9 +70,9 @@ class CompleteGeneratedQuestion(BaseModel):
     solution: Optional[str]
 
 class CompleteProblemSet(BaseModel):
-    set: str
-    is_full_test: bool
+    question: str
+    explanation: str
 
 class CompleteTestSet(BaseModel):
-    name: str
-    is_full_test: bool
+    question: str
+    explanation: str

@@ -4,7 +4,7 @@ from app.math.schemas import (
     GenerateSimilarQuestionRequest,
     GenerateTestSetRequest,
     CompleteGeneratedQuestion,
-    CompleteProblemSet,
+    ProblemInsideSet,
     CompleteTestSet,
     MajorCategory,
     QuestionType,
@@ -19,7 +19,7 @@ router = APIRouter(prefix="/math", tags=["Math"])
 from app.math import service as math_service
 from app.constants import SUPABASE_URL, SUPABASE_KEY
 
-supabase_exp: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+supabase_exp = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 @router.post(
     "/problem_generation", response_model=List[CompleteGeneratedQuestion]
@@ -32,7 +32,7 @@ async def generate_similar_question(
     return result
 
 @router.post(
-    "/problem_set_generation", response_model=List[CompleteProblemSet]
+    "/problem_set_generation", response_model=List[ProblemInsideSet]
 )
 async def generate_similar_question(
     request: GenerateSimilarQuestionRequest,
