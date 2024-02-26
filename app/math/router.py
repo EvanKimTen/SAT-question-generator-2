@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends
 from supabase import create_client, Client
 from app.math.schemas import (
     GenerateSimilarQuestionRequest,
+    GenerateProblemSetRequest,
     GenerateTestSetRequest,
     CompleteGeneratedQuestion,
     ProblemInsideSet,
@@ -35,7 +36,7 @@ async def generate_similar_question(
     "/problem_set_generation", response_model=List[ProblemInsideSet]
 )
 async def generate_similar_question(
-    request: GenerateSimilarQuestionRequest,
+    request: GenerateProblemSetRequest,
     # current_user = Depends(get_current_user_authorizer()),
 ):
     result = math_service.generate_problem_set(request, supabase_exp)

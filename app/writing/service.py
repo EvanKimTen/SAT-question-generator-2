@@ -11,6 +11,7 @@ from app.writing.schemas import (
 
 from app.writing.utils import generate_sat_question
 
+from datetime import datetime, timedelta
 from typing import List
 import random
 import json
@@ -31,10 +32,16 @@ def generate_questions(
         complete_generated_question = CompleteGeneratedQuestion.parse_obj(
             generated_question
         )
+        created_at = datetime.utcnow() - timedelta(hours=2)
+        creation_date = {"created_at": str(created_at)}
         complete_generated_question_dict = complete_generated_question.dict()
+        creation_date.update(complete_generated_question_dict)
+        complete_generated_question_dict = creation_date
         complete_generated_question_json = json.dumps(complete_generated_question_dict)
         print(complete_generated_question_json)
-        supabase_exp.table("problems").insert(complete_generated_question_json).execute()
+
+        data = supabase_exp.table("problems").insert(complete_generated_question_json).execute()
+        print(data)
         # if generated_question.error:
         #     raise HTTPException(status_code=400, detail=generated_question.error.message)
         generated_questions.append(complete_generated_question)
@@ -81,7 +88,6 @@ def generate_problem_set(
                     if category_id['category_id'] == category_id_l:
                         problem_category_id_list.append(category_id['problem_id'])
 
-    # print(problem_category_id_list)
 
     problems_ids = supabase_exp.table("problems").select("id, question, explanation").execute()
     problem_set = []
@@ -135,7 +141,7 @@ def generate_test(
                             "Transitions": 0.20
                         }
                         for category, ratio in category_distribution.items():
-                            category_questions, num_questions_to_select = randomlySelectProblems(category, ratio, total_questions)
+                            category_questions, num_questions_to_select = fetchSelectedQuestions(category, ratio, total_questions)
                             test_set.extend(random.sample(category_questions, num_questions_to_select))
 
                 elif module == "2-easy":
@@ -154,7 +160,7 @@ def generate_test(
                         "Transitions": 0.20
                     }
                     for category, ratio in category_distribution.items():
-                        category_questions, num_questions_to_select = randomlySelectProblems(category, ratio, total_questions)
+                        category_questions, num_questions_to_select = fetchSelectedQuestions(category, ratio, total_questions)
                         test_set.extend(random.sample(category_questions, num_questions_to_select))
 
                 elif module == "2-hard":
@@ -172,23 +178,77 @@ def generate_test(
                         "Punctuations": 0.0325,        
                         "Transitions": 0.20
                     }
+                    sum_prob = 0
+                    for ratio in category_distribution.values():
+                        sum_prob += ratio
+                    
                     for category, ratio in category_distribution.items():
-                        category_questions, num_questions_to_select = randomlySelectProblems(category, ratio, total_questions)
+                        ratio = (ratio / sum_prob) * 100
+                        category_questions, num_questions_to_select = fetchSelectedQuestions(category, ratio, total_questions)
+                        # fetch all of the questions in the given categor
+                        # as well as find out the num of qs to randomly select.
+                        # since the order to fetch is that I couldn't change.
                         test_set.extend(random.sample(category_questions, num_questions_to_select))
-    return []
+                        # Then, randomly select the no. of qs.
+    return test_set
 
-def randomlySelectProblems(category, ratio, total_questions, supabase_exp):
+def fetchSelectedQuestions(category, ratio, total_questions, supabase_exp):
     num_questions_to_select = round(total_questions * ratio)
-    query = f"""
-    SELECT problems.question
-    FROM problems
-    INNER JOIN problem_problem_categories ON problem_problem_categories.category_id = problems.id
-    INNER JOIN problem_categories ON problem_problem_categories.category_id = problem_categories.id
-    WHERE problem_categories.level1 = '{category}'
-    """
-    category_questions = supabase_exp.table("problems").execute_sql(query)
+    # query = f"""
+    # SELECT problems.question
+    # FROM problems
+    # INNER JOIN problem_problem_categories ON problem_problem_categories.category_id = problems.id
+    # INNER JOIN problem_categories ON problem_problem_categories.category_id = problem_categories.id
+    # WHERE problem_categories.level1 = '{category}'
+    # """
+    problem_problem_categories_ids = supabase_exp.table("problem_problem_categories").select("problem_id, category_id").execute()
+    problem_category_id_list = []
+    problem_categories = supabase_exp.table("problem_categories").select("id, level1").execute()
+    category_id_list = []
+    for problem_category in problem_categories:
+        if problem_category is None:
+            break
+        categories = problem_category[1]
+        if categories is not None:
+            for retrived_category in categories:
+                if retrived_category['level1'] == category:
+                    category_id_list.append(retrived_category['id'])
+
+    for problem_problem_categories_id in problem_problem_categories_ids:
+        if problem_problem_categories_id is None:
+            break
+        category_ids = problem_problem_categories_id[1]
+        if category_ids is not None:
+            for category_id in category_ids:
+                for category_id_l in category_id_list:
+                    if category_id['category_id'] == category_id_l:
+                        problem_category_id_list.append(category_id['problem_id'])
+
+    for problem_problem_categories_id in problem_problem_categories_ids:
+        if problem_problem_categories_id is None:
+            break
+        category_ids = problem_problem_categories_id[1]
+        if category_ids is not None:
+            for category_id in category_ids:
+                for category_id_l in category_id_list:
+                    if category_id['category_id'] == category_id_l:
+                        problem_category_id_list.append(category_id['problem_id'])
+
+
+    problems_ids = supabase_exp.table("problems").select("id, question").execute()
+    questions = []
+    for problems_id in problems_ids:
+        if problems_id is None:
+            break
+        prob_ids = problems_id[1]
+        if prob_ids is not None:
+            for category_id in prob_ids:
+                for category_id_l in problem_category_id_list:
+                    if category_id['id'] == category_id_l:
+                        if category_id not in questions:
+                            questions.append(category_id)
     
-    return num_questions_to_select, category_questions
+    return num_questions_to_select, questions
 
     
 

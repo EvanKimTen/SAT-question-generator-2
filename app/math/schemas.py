@@ -278,6 +278,13 @@ class GenerateSimilarQuestionRequest(BaseModel):
     question_count: conint(ge=1, le=5) = Field(example=1)
     solution: Optional[str]
 
+class GenerateProblemSetRequest(BaseModel):
+    major_one_category: MajorCategory = Field()
+    sub_one_category: str
+    example_question: Optional[str]
+    model_version: ModelVersion
+    question_count: conint(ge=1, le=5) = Field(example=1)
+
 class GenerateTestSetRequest(BaseModel):
     category: Category
     example_question: Optional[str]
