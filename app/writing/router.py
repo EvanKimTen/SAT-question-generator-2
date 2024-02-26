@@ -2,8 +2,11 @@ from fastapi import APIRouter
 from supabase import create_client, Client
 from app.writing.schemas import (
     GenerateSimilarQuestionRequest,
+    GenerateProblemSetRequest,
     GenerateTestSetRequest,
     CompleteGeneratedQuestion,
+    CompleteProblemSet,
+    CompleteTestSet,
 )
 from typing import List
 
@@ -27,16 +30,16 @@ async def generate_similar_question(
 
     
 @router.post(
-    "/problem_set_generation", response_model=List[CompleteGeneratedQuestion]
+    "/problem_set_generation", response_model=List[CompleteProblemSet]
 ) 
 async def problem_set_generation(
-    request: GenerateSimilarQuestionRequest,
+    request: GenerateProblemSetRequest,
 ):
     result = writing_service.generate_problem_set(request, supabase_exp)
     return result
 
 @router.post(
-    "/test_generation", response_model=List[CompleteGeneratedQuestion]
+    "/test_generation", response_model=List[CompleteTestSet]
 ) 
 async def test_generation(
     request: GenerateTestSetRequest,

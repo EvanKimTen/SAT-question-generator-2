@@ -4,18 +4,18 @@ from typing import Optional
 
 
 class Category(str, Enum):
-    PUNCTUATIONS = "Punctuations"
-    SENTENCE_FRAGMENT = "Sentence vs Fragment"
-    ESSENTIAL_NONESSENTIAL = "Essential vs Non-Essential"
+    PUNCTUATIONS = "Punctuations" #
+    SENTENCE_FRAGMENT = "Sentence vs Fragment" #
+    ESSENTIAL_NONESSENTIAL = "Essential vs Non-Essential" #
     APOSTROPHE = "Apostrophe"
-    PRONOUN = "Pronoun: Case and Agreement"
+    PRONOUN = "Pronoun: Case and Agreement" #
     SUBJECT_VERB_AGREEMENT = "Subject-Verb Agreement"
     VERB_TENSE = "Verb Tense"
     VERB_FORMS = "Verb Forms"
-    PARALLEL_STRUCTURE = "Parallel Structure" # 1
+    PARALLEL_STRUCTURE = "Parallel Structure"
     SUBJECT_MODIFIER = "Subject-Modifier"
-    TRANSITIONS = "Transitions" # 4
-    ACCOMPLISHING_THE_GOAL = "Accomplishing the Goal" # 2
+    TRANSITIONS = "Transitions" 
+    ACCOMPLISHING_THE_GOAL = "Accomplishing the Goal" 
 
 
 class QuestionType(str, Enum):
@@ -33,6 +33,13 @@ class GenerateSimilarQuestionRequest(BaseModel):
     model_version: ModelVersion
     question_count: conint(ge=1, le=5) = Field(example=1)
     solution: Optional[str]
+
+class GenerateProblemSetRequest(BaseModel):
+    category: Category
+    example_question: Optional[str]
+    model_version: ModelVersion
+    question_count: conint(ge=1, le=5) = Field(example=1)
+
 
 class GenerateTestSetRequest(BaseModel):
     category: Category
@@ -62,14 +69,15 @@ class SolutionWithChoices(BaseModel):
 class CompleteGeneratedQuestion(BaseModel):
     passage: Optional[str]
     question: str
-    choice_a: Optional[str]
-    choice_b: Optional[str]
-    choice_c: Optional[str]
-    choice_d: Optional[str]
-    correct_choice: Optional[str]
-    solution: Optional[str]
+    choice_a: str
+    choice_b: str
+    choice_c: str
+    choice_d: str
+    correct_choice: str
+    solution: str
 
 class CompleteProblemSet(BaseModel):
+    id: int
     question: str
     explanation: str
 

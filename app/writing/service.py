@@ -2,6 +2,7 @@ from fastapi import HTTPException
 from supabase import create_client, Client
 from app.writing.schemas import (
     GenerateSimilarQuestionRequest,
+    GenerateProblemSetRequest,
     GenerateTestSetRequest,
     CompleteGeneratedQuestion,
     CompleteProblemSet,
@@ -32,6 +33,7 @@ def generate_questions(
         )
         complete_generated_question_dict = complete_generated_question.dict()
         complete_generated_question_json = json.dumps(complete_generated_question_dict)
+        print(complete_generated_question_json)
         supabase_exp.table("problems").insert(complete_generated_question_json).execute()
         # if generated_question.error:
         #     raise HTTPException(status_code=400, detail=generated_question.error.message)
@@ -40,23 +42,65 @@ def generate_questions(
     return generated_questions
 
 def generate_problem_set(
-    data: GenerateSimilarQuestionRequest,
+    data: GenerateProblemSetRequest,
     supabase_exp: Client
 ) -> List[CompleteProblemSet]:
     problem_count = data.question_count
-    problem_set = []
-    problems = supabase_exp.table("problems").select("question, explanation").execute()
-    count = 0
-    for extractor in problems:
-        if extractor is None:
+    problem_problem_categories_ids = supabase_exp.table("problem_problem_categories").select("problem_id, category_id").execute()
+    problem_category_id_list = []
+    problem_categories = supabase_exp.table("problem_categories").select("id, level1").execute()
+    category_id_list = []
+    category = "Linear Equations"
+    # category = data.category
+    for problem_category in problem_categories:
+        if problem_category is None:
             break
-        sep_problems = extractor[1]
-        if sep_problems is not None:
-            for problem in sep_problems:
-                if problem_count == count: 
-                    break
-                problem_set.append(problem)
-                count += 1
+        categories = problem_category[1]
+        if categories is not None:
+            for retrived_category in categories:
+                if retrived_category['level1'] == category:
+                    category_id_list.append(retrived_category['id'])
+
+    for problem_problem_categories_id in problem_problem_categories_ids:
+        if problem_problem_categories_id is None:
+            break
+        category_ids = problem_problem_categories_id[1]
+        if category_ids is not None:
+            for category_id in category_ids:
+                for category_id_l in category_id_list:
+                    if category_id['category_id'] == category_id_l:
+                        problem_category_id_list.append(category_id['problem_id'])
+
+    for problem_problem_categories_id in problem_problem_categories_ids:
+        if problem_problem_categories_id is None:
+            break
+        category_ids = problem_problem_categories_id[1]
+        if category_ids is not None:
+            for category_id in category_ids:
+                for category_id_l in category_id_list:
+                    if category_id['category_id'] == category_id_l:
+                        problem_category_id_list.append(category_id['problem_id'])
+
+    # print(problem_category_id_list)
+
+    problems_ids = supabase_exp.table("problems").select("id, question, explanation").execute()
+    problem_set = []
+    problem_count = 2
+    count = 0
+    for problems_id in problems_ids:
+        if problems_id is None:
+            break
+        prob_ids = problems_id[1]
+        if prob_ids is not None:
+            for category_id in prob_ids:
+                for category_id_l in problem_category_id_list:
+                    if problem_count == count:
+                        break
+                    if category_id['id'] == category_id_l:
+                        if category_id not in problem_set:
+                            problem_set.append(category_id)
+                            count += 1
+                            
     return problem_set
 
 def generate_test(
