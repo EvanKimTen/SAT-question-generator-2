@@ -4,11 +4,11 @@ from typing import Optional
 
 
 class Category(str, Enum):
-    PUNCTUATIONS = "Punctuations" #
-    SENTENCE_FRAGMENT = "Sentence vs Fragment" #
-    ESSENTIAL_NONESSENTIAL = "Essential vs Non-Essential" #
+    PUNCTUATIONS = "Punctuations"
+    SENTENCE_FRAGMENT = "Sentence vs Fragment"
+    ESSENTIAL_NONESSENTIAL = "Essential vs Non-Essential"
     APOSTROPHE = "Apostrophe"
-    PRONOUN = "Pronoun: Case and Agreement" #
+    PRONOUN = "Pronoun: Case and Agreement"
     SUBJECT_VERB_AGREEMENT = "Subject-Verb Agreement"
     VERB_TENSE = "Verb Tense"
     VERB_FORMS = "Verb Forms"

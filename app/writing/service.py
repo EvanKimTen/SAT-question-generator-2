@@ -53,7 +53,7 @@ def generate_problem_set(
     data: GenerateProblemSetRequest,
     supabase_exp: Client
 ) -> List[CompleteProblemSet]:
-    problem_count = data.question_count
+    problem_count = data.question_count # 54
     category = "Linear Equations"
     # category = data.category
     problem_category_id_list = ProblemIdOfGivenCategories(category, supabase_exp)

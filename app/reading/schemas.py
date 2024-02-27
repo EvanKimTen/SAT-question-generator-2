@@ -9,7 +9,6 @@ class Category(str, Enum):
     PURPOSE_SCI_SS = "Purpose - Sci / SS"
     PURPOSE_LIT = "Purpose - Literature"
 
-
 class QuestionType(str, Enum):
     MULTIPLE_CHOICE = "Multiple Choice"
 
@@ -27,6 +26,19 @@ class GenerateSimilarQuestionRequest(BaseModel):
     question_count: conint(ge=1, le=5) = Field(example=1)
     solution: Optional[str]
     selection_passage_example: Optional[str]
+
+class GenerateProblemSetRequest(BaseModel):
+    category: Category
+    example_question: Optional[str]
+    model_version: ModelVersion
+    question_count: conint(ge=1, le=5) = Field(example=1)
+
+
+class GenerateTestSetRequest(BaseModel):
+    category: Category
+    example_question: Optional[str]
+    question_count: conint(ge=1, le=5) = Field(example=1)
+    model_version: ModelVersion
 
 
 class GeneratedQuestion(BaseModel):
@@ -59,6 +71,21 @@ class CompleteGeneratedQuestion(BaseModel):
     choice_d: str
     correct_choice: str
     solution: str
+
+class CompleteProblemSet(BaseModel):
+    id: int
+    question: str
+    explanation: str
+
+class CompleteTestSet(BaseModel):
+    question: str
+    explanation: str
+    
+class Module(str, Enum):
+    INITIAL = "1"
+    NEXT_EASY = "2-easy"
+    NEXT_HARD ="2-hard"
+
 
 class PreprocessedPassage(BaseModel):
     preprocessed_passage: str
