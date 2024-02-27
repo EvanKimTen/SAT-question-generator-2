@@ -14,7 +14,7 @@ from app.reading.schemas import (
 from typing import List
 import random
 
-def generate_questions(
+def generate_problems(
     data: GenerateSimilarQuestionRequest,
 ) -> List[CompleteGeneratedQuestion]:
     question_count = data.question_count
@@ -29,6 +29,7 @@ def generate_questions(
         generated_questions.append(generated_question)
 
     return generated_questions
+
 def generate_problem_set(
     data: GenerateProblemSetRequest,
     supabase_exp: Client
@@ -186,13 +187,13 @@ def ProblemIdOfGivenCategories(category, supabase_exp):
 
     return problem_category_id_list
 
-def get_category_list():
-    return list(Category)
+# def get_category_list():
+#     return list(Category)
 
 
-def get_question_type_list():
-    return list(QuestionType)
+# def get_question_type_list():
+#     return list(QuestionType)
 
 
-def get_model_version_list():
-    return list(ModelVersion)
+# def get_model_version_list():
+#     return list(ModelVersion)

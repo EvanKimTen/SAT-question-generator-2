@@ -22,7 +22,6 @@ class ModelVersion(Enum):
 class GenerateSimilarQuestionRequest(BaseModel):
     category: Category
     example_question: Optional[str]
-    model_version: ModelVersion
     question_count: conint(ge=1, le=5) = Field(example=1)
     solution: Optional[str]
     selection_passage_example: Optional[str]
@@ -30,7 +29,6 @@ class GenerateSimilarQuestionRequest(BaseModel):
 class GenerateProblemSetRequest(BaseModel):
     category: Category
     example_question: Optional[str]
-    model_version: ModelVersion
     question_count: conint(ge=1, le=5) = Field(example=1)
 
 
@@ -38,7 +36,6 @@ class GenerateTestSetRequest(BaseModel):
     category: Category
     example_question: Optional[str]
     question_count: conint(ge=1, le=5) = Field(example=1)
-    model_version: ModelVersion
 
 
 class GeneratedQuestion(BaseModel):

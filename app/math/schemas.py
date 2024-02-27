@@ -274,7 +274,6 @@ class GenerateSimilarQuestionRequest(BaseModel):
         example="$x^2-2x-9=0$ One solution to the given equation can be written as $1+\\sqrt{k}$, where $k$ is a constant. What is the value of $k$?"
     )
     question_type: QuestionType
-    model_version: ModelVersion
     question_count: conint(ge=1, le=5) = Field(example=1)
     solution: Optional[str]
 
@@ -282,13 +281,11 @@ class GenerateProblemSetRequest(BaseModel):
     major_one_category: MajorCategory = Field()
     sub_one_category: str
     example_question: Optional[str]
-    model_version: ModelVersion
     question_count: conint(ge=1, le=5) = Field(example=1)
 
 class GenerateTestSetRequest(BaseModel):
     category: Category
     example_question: Optional[str]
-    model_version: ModelVersion
     question_count: conint(ge=1) = Field(example=1)
 
 class GeneratedQuestion(BaseModel):

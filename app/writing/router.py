@@ -21,11 +21,11 @@ supabase_exp: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 @router.post(
     "/problem_generation", response_model=List[CompleteGeneratedQuestion]
 ) 
-async def generate_similar_question(
+async def generate_similar_problem(
     request: GenerateSimilarQuestionRequest,
     # current_user = Depends(get_current_user_authorizer()),
 ):
-    results = writing_service.generate_questions(request, supabase_exp)
+    results = writing_service.generate_problems(request, supabase_exp)
     return results
 
     

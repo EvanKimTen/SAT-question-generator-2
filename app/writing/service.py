@@ -16,7 +16,7 @@ from typing import List
 import random
 import json
 
-def generate_questions(
+def generate_problems(
     data: GenerateSimilarQuestionRequest,
     supabase_exp: Client
 ) -> List[CompleteGeneratedQuestion]:

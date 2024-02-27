@@ -25,17 +25,17 @@ supabase_exp = create_client(SUPABASE_URL, SUPABASE_KEY)
 @router.post(
     "/problem_generation", response_model=List[CompleteGeneratedQuestion]
 )
-async def generate_similar_question(
+async def generate_similar_problem(
     request: GenerateSimilarQuestionRequest,
     # current_user = Depends(get_current_user_authorizer()),
 ):
-    result = math_service.generate_questions(request, supabase_exp)
+    result = math_service.generate_problems(request, supabase_exp)
     return result
 
 @router.post(
     "/problem_set_generation", response_model=List[CompleteProblemSet]
 )
-async def generate_similar_question(
+async def problem_set_generation(
     request: GenerateProblemSetRequest,
     # current_user = Depends(get_current_user_authorizer()),
 ):
@@ -45,9 +45,9 @@ async def generate_similar_question(
 @router.post(
     "/test_set_generation", response_model=List[CompleteTestSet]
 )
-async def generate_similar_question(
+async def test_generation(
     request: GenerateTestSetRequest,
     # current_user = Depends(get_current_user_authorizer()),
 ):
-    result = math_service.generate_test_set(request, supabase_exp)
+    result = math_service.generate_test(request, supabase_exp)
     return result

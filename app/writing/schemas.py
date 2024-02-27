@@ -8,6 +8,20 @@ class Category(str, Enum):
     SENTENCE_FRAGMENT = "Sentence vs Fragment"
     ESSENTIAL_NONESSENTIAL = "Essential vs Non-Essential"
     APOSTROPHE = "Apostrophe"
+    PRONOUN = "Pronoun-Antecedent Agreement"
+    SUBJECT_VERB_AGREEMENT = "Subject-Verb Agreement"
+    VERB_TENSE = "Verb Forms - Tense"
+    VERB_FORMS = "Verb forms - Finite vs. Non-finite"
+    PARALLEL_STRUCTURE = "Parallel Structure"
+    SUBJECT_MODIFIER = "Subject-Modifier Placement"
+    TRANSITIONS = "Transitions" 
+    ACCOMPLISHING_THE_GOAL = "Accomplishing the Goal" 
+
+class CategoryLv2(str, Enum):
+    PUNCTUATIONS = "Punctuations"
+    SENTENCE_FRAGMENT = "Sentence vs Fragment"
+    ESSENTIAL_NONESSENTIAL = "Essential vs Non-Essential"
+    APOSTROPHE = "Apostrophe"
     PRONOUN = "Pronoun: Case and Agreement"
     SUBJECT_VERB_AGREEMENT = "Subject-Verb Agreement"
     VERB_TENSE = "Verb Tense"
@@ -16,7 +30,6 @@ class Category(str, Enum):
     SUBJECT_MODIFIER = "Subject-Modifier"
     TRANSITIONS = "Transitions" 
     ACCOMPLISHING_THE_GOAL = "Accomplishing the Goal" 
-
 
 class QuestionType(str, Enum):
     MULTIPLE_CHOICE = "Multiple Choice"
@@ -30,14 +43,12 @@ class ModelVersion(Enum):
 class GenerateSimilarQuestionRequest(BaseModel):
     category: Category
     example_question: Optional[str]
-    model_version: ModelVersion
     question_count: conint(ge=1, le=5) = Field(example=1)
     solution: Optional[str]
 
 class GenerateProblemSetRequest(BaseModel):
     category: Category
     example_question: Optional[str]
-    model_version: ModelVersion
     question_count: conint(ge=1, le=5) = Field(example=1)
 
 
@@ -45,7 +56,6 @@ class GenerateTestSetRequest(BaseModel):
     category: Category
     example_question: Optional[str]
     question_count: conint(ge=1, le=5) = Field(example=1)
-    model_version: ModelVersion
 
 class Module(str, Enum):
     INITIAL = "1"

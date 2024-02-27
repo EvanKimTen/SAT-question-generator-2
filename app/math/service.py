@@ -24,7 +24,7 @@ from typing import List
 import random
 import json
 
-def generate_questions(
+def generate_problems(
     data: GenerateSimilarQuestionRequest,
     supabase_exp: Client
 ) -> List[CompleteGeneratedQuestion]:
@@ -95,7 +95,7 @@ def generate_problem_set(
                             
     return problem_set
 
-def generate_test_set(    
+def generate_test(    
     data: GenerateTestSetRequest,
     supabase_exp: Client
 ) -> List[CompleteTestSet]:
