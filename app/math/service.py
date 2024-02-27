@@ -12,7 +12,7 @@ from app.math.schemas import (
     GenerateProblemSetRequest,
     GenerateTestSetRequest,
     CompleteGeneratedQuestion,
-    ProblemInsideSet,
+    CompleteProblemSet,
     CompleteTestSet,
     MajorCategory,
     QuestionType,
@@ -30,14 +30,14 @@ def generate_questions(
 ) -> List[CompleteGeneratedQuestion]:
     question_count = data.question_count
     generated_questions = []
-
+    category_questions = fetchSelectedQuestions(data.major_one_category, supabase_exp)
     for _ in range(question_count):
         generated_question = generate_sat_question(
             major_one_category=data.major_one_category,
             major_two_category=data.major_two_category,
             sub_one_category=data.sub_one_category,
             sub_two_category=data.sub_two_category,
-            example_question=data.example_question,
+            example_question=random.choice(category_questions),
             question_type=data.question_type,
         )
         
@@ -69,43 +69,11 @@ def generate_questions(
 def generate_problem_set(    
     data: GenerateProblemSetRequest,
     supabase_exp: Client
-):
+) -> List[CompleteProblemSet]:
     problem_count = data.question_count
-    problem_problem_categories_ids = supabase_exp.table("problem_problem_categories").select("problem_id, category_id").execute()
-    problem_category_id_list = []
-    problem_categories = supabase_exp.table("problem_categories").select("id, level1").execute()
-    category_id_list = []
-    category = data.major_one_category
-    for problem_category in problem_categories:
-        if problem_category is None:
-            break
-        categories = problem_category[1]
-        if categories is not None:
-            for retrived_category in categories:
-                if retrived_category['level1'] == category:
-                    category_id_list.append(retrived_category['id'])
+    category = data.category
 
-    for problem_problem_categories_id in problem_problem_categories_ids:
-        if problem_problem_categories_id is None:
-            break
-        category_ids = problem_problem_categories_id[1]
-        if category_ids is not None:
-            for category_id in category_ids:
-                for category_id_l in category_id_list:
-                    if category_id['category_id'] == category_id_l:
-                        problem_category_id_list.append(category_id['problem_id'])
-
-    for problem_problem_categories_id in problem_problem_categories_ids:
-        if problem_problem_categories_id is None:
-            break
-        category_ids = problem_problem_categories_id[1]
-        if category_ids is not None:
-            for category_id in category_ids:
-                for category_id_l in category_id_list:
-                    if category_id['category_id'] == category_id_l:
-                        problem_category_id_list.append(category_id['problem_id'])
-
-    # print(problem_category_id_list)
+    problem_category_id_list = ProblemIdOfGivenCategories(category, supabase_exp)
 
     problems_ids = supabase_exp.table("problems").select("id, question, explanation").execute()
     problem_set = []
@@ -173,7 +141,8 @@ def generate_test_set(
                 
                 for category, ratio in category_distribution.items():
                     ratio = (ratio / sum_prob) * 100
-                    category_questions, num_questions_to_select = fetchSelectedQuestions(category, ratio, total_questions)
+                    num_questions_to_select = round(total_questions * ratio)
+                    category_questions = fetchSelectedQuestions(category, supabase_exp)
                     test_set.extend(random.sample(category_questions, num_questions_to_select))
 
             elif module == "2-easy":
@@ -209,7 +178,8 @@ def generate_test_set(
                 
                 for category, ratio in category_distribution.items():
                     ratio = (ratio / sum_prob) * 100
-                    category_questions, num_questions_to_select = fetchSelectedQuestions(category, ratio, total_questions)
+                    num_questions_to_select = round(total_questions * ratio)
+                    category_questions = fetchSelectedQuestions(category, supabase_exp)
                     test_set.extend(random.sample(category_questions, num_questions_to_select))
 
             elif module == "2-hard":
@@ -245,20 +215,31 @@ def generate_test_set(
                 
                 for category, ratio in category_distribution.items():
                     ratio = (ratio / sum_prob) * 100
-                    category_questions, num_questions_to_select = fetchSelectedQuestions(category, ratio, total_questions)
+                    num_questions_to_select = round(total_questions * ratio)
+                    category_questions = fetchSelectedQuestions(category, supabase_exp)
                     test_set.extend(random.sample(category_questions, num_questions_to_select))
     return test_set
-    return []
 
-def fetchSelectedQuestions(category, ratio, total_questions, supabase_exp):
-    num_questions_to_select = round(total_questions * ratio)
-    # query = f"""
-    # SELECT problems.question
-    # FROM problems
-    # INNER JOIN problem_problem_categories ON problem_problem_categories.category_id = problems.id
-    # INNER JOIN problem_categories ON problem_problem_categories.category_id = problem_categories.id
-    # WHERE problem_categories.level1 = '{category}'
-    # """
+def fetchSelectedQuestions(category, supabase_exp):
+    problem_category_id_list = ProblemIdOfGivenCategories(category, supabase_exp)
+
+    problems_ids = supabase_exp.table("problems").select("id, question").execute()
+    questions = []
+    for problems_id in problems_ids:
+        if problems_id is None:
+            break
+        prob_ids = problems_id[1]
+        if prob_ids is not None:
+            for category_id in prob_ids:
+                for category_id_l in problem_category_id_list:
+                    if category_id['id'] == category_id_l:
+                        if category_id not in questions:
+                            questions.append(category_id)
+    
+    return questions
+
+def ProblemIdOfGivenCategories(category, supabase_exp):
+    
     problem_problem_categories_ids = supabase_exp.table("problem_problem_categories").select("problem_id, category_id").execute()
     problem_category_id_list = []
     problem_categories = supabase_exp.table("problem_categories").select("id, level1").execute()
@@ -282,32 +263,7 @@ def fetchSelectedQuestions(category, ratio, total_questions, supabase_exp):
                     if category_id['category_id'] == category_id_l:
                         problem_category_id_list.append(category_id['problem_id'])
 
-    for problem_problem_categories_id in problem_problem_categories_ids:
-        if problem_problem_categories_id is None:
-            break
-        category_ids = problem_problem_categories_id[1]
-        if category_ids is not None:
-            for category_id in category_ids:
-                for category_id_l in category_id_list:
-                    if category_id['category_id'] == category_id_l:
-                        problem_category_id_list.append(category_id['problem_id'])
-
-
-    problems_ids = supabase_exp.table("problems").select("id, question").execute()
-    questions = []
-
-    for problems_id in problems_ids:
-        if problems_id is None:
-            break
-        prob_ids = problems_id[1]
-        if prob_ids is not None:
-            for category_id in prob_ids:
-                for category_id_l in problem_category_id_list:
-                    if category_id['id'] == category_id_l:
-                        if category_id not in questions:
-                            questions.append(category_id)
-    
-    return num_questions_to_select, questions
+    return problem_category_id_list
 
 def solve_sympy(question: str) -> SympySolvedQuestion:
     sympy_translation = translate_to_sympy(question)

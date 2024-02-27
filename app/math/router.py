@@ -5,7 +5,7 @@ from app.math.schemas import (
     GenerateProblemSetRequest,
     GenerateTestSetRequest,
     CompleteGeneratedQuestion,
-    ProblemInsideSet,
+    CompleteProblemSet,
     CompleteTestSet,
     MajorCategory,
     QuestionType,
@@ -33,7 +33,7 @@ async def generate_similar_question(
     return result
 
 @router.post(
-    "/problem_set_generation", response_model=List[ProblemInsideSet]
+    "/problem_set_generation", response_model=List[CompleteProblemSet]
 )
 async def generate_similar_question(
     request: GenerateProblemSetRequest,

@@ -315,7 +315,7 @@ class CompleteGeneratedQuestion(BaseModel):
     correct_choice: Optional[str]
     solution: Optional[str]
     
-class ProblemInsideSet(BaseModel):
+class CompleteProblemSet(BaseModel):
     question: str
     explanation: str
 
