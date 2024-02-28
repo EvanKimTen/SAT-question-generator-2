@@ -39,17 +39,15 @@ def inference_with_chatcompletion_model(prompt: str, model_name: str):
 
 def generate_sat_question(
     major_one_category: MajorCategory,
-    sub_one_category: str,
     major_two_category: MajorCategory,
-    sub_two_category: str,
+    major_three_category: MajorCategory,
     example_question: str,
     question_type: QuestionType,
 ):
     _input = generate_question_template.format_prompt(
         major_one_category=major_one_category,
         major_two_category=major_two_category,
-        sub_one_category=sub_one_category,
-        sub_two_category=sub_two_category,
+        major_three_category=major_three_category,
         example_question=example_question,
         question_type=question_type,
     )

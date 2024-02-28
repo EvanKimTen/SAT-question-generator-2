@@ -19,7 +19,7 @@ from app.reading import service as reading_service
 supabase_exp: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 @router.post(
-    "/generate-similar-question", response_model=List[CompleteGeneratedQuestion]
+    "/problem_generation", response_model=List[CompleteGeneratedQuestion]
 )
 async def generate_similar_problem(
     request: GenerateSimilarQuestionRequest,

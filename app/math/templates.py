@@ -18,8 +18,7 @@ generate_question_template = ChatPromptTemplate(
     input_variables=[
         "major_one_category",
         "major_two_category",
-        "sub_one_category",
-        "sub_two_category",
+        "major_three_category",
         "example_question",
         "question_type",
     ],

@@ -1,4 +1,4 @@
-from pydantic import BaseModel, conint, Field
+from pydantic import BaseModel, conint, Field, UUID1
 from enum import Enum
 from typing import Optional
 
@@ -42,19 +42,15 @@ class ModelVersion(Enum):
 
 class GenerateSimilarQuestionRequest(BaseModel):
     category: Category
-    example_question: Optional[str]
     question_count: conint(ge=1, le=5) = Field(example=1)
-    solution: Optional[str]
 
 class GenerateProblemSetRequest(BaseModel):
     category: Category
-    example_question: Optional[str]
     question_count: conint(ge=1, le=5) = Field(example=1)
 
 
 class GenerateTestSetRequest(BaseModel):
     category: Category
-    example_question: Optional[str]
     question_count: conint(ge=1, le=5) = Field(example=1)
 
 class Module(str, Enum):
@@ -87,10 +83,11 @@ class CompleteGeneratedQuestion(BaseModel):
     solution: str
 
 class CompleteProblemSet(BaseModel):
-    id: int
-    question: str
-    explanation: str
+    name: str = Field(default="New Problem Set")
+    is_full_test: bool = Field(example=False)
+    user_id: UUID1
 
 class CompleteTestSet(BaseModel):
-    question: str
-    explanation: str
+    name: str = Field(default="New Test")
+    is_full_test: bool = Field(example=True)
+    user_id: UUID1

@@ -268,24 +268,16 @@ class ModelVersion(Enum):
 class GenerateSimilarQuestionRequest(BaseModel):
     major_one_category: MajorCategory = Field()
     major_two_category: Optional[MajorCategory] = Field()
-    sub_one_category: str
-    sub_two_category: Optional[str]
-    example_question: Optional[str] = Field(
-        example="$x^2-2x-9=0$ One solution to the given equation can be written as $1+\\sqrt{k}$, where $k$ is a constant. What is the value of $k$?"
-    )
+    major_three_category: Optional[MajorCategory] = Field()
     question_type: QuestionType
     question_count: conint(ge=1, le=5) = Field(example=1)
-    solution: Optional[str]
 
 class GenerateProblemSetRequest(BaseModel):
-    major_one_category: MajorCategory = Field()
-    sub_one_category: str
-    example_question: Optional[str]
+    category: MajorCategory = Field()
     question_count: conint(ge=1, le=5) = Field(example=1)
 
 class GenerateTestSetRequest(BaseModel):
     category: Category
-    example_question: Optional[str]
     question_count: conint(ge=1) = Field(example=1)
 
 class GeneratedQuestion(BaseModel):

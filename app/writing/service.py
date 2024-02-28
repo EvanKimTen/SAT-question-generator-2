@@ -54,8 +54,8 @@ def generate_problem_set(
     supabase_exp: Client
 ) -> List[CompleteProblemSet]:
     problem_count = data.question_count # 54
-    category = "Linear Equations"
-    # category = data.category
+    # category = "Linear Equations"
+    category = data.category
     problem_category_id_list = ProblemIdOfGivenCategories(category, supabase_exp)
 
     problems_ids = supabase_exp.table("problems").select("id, question, explanation").execute()
@@ -74,7 +74,7 @@ def generate_problem_set(
                         if category_id not in problem_set:
                             problem_set.append(category_id)
                             count += 1
-                            
+    print(problem_set)
     return problem_set
 
 def generate_test(
@@ -108,11 +108,16 @@ def generate_test(
                             "Punctuations": 0.0325,        
                             "Transitions": 0.20
                         }
+                        sum_prob = 0
+                        for ratio in category_distribution.values():
+                            sum_prob += ratio
                         for category, ratio in category_distribution.items():
                             ratio = (ratio / sum_prob) * 100
                             num_questions_to_select = round(total_questions * ratio)
                             category_questions = fetchSelectedQuestions(category, supabase_exp)
+                            print(category_questions, num_questions_to_select)
                             test_set.extend(random.sample(category_questions, num_questions_to_select))
+                            # should generate more problems then gonna be resolved.
 
                 elif module == "2-easy":
                     category_distribution = {
@@ -129,6 +134,9 @@ def generate_test(
                         "Punctuations": 0.0325,        
                         "Transitions": 0.20
                     }
+                    sum_prob = 0
+                    for ratio in category_distribution.values():
+                        sum_prob += ratio
                     for category, ratio in category_distribution.items():
                         ratio = (ratio / sum_prob) * 100
                         num_questions_to_select = round(total_questions * ratio)

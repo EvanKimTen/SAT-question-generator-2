@@ -11,20 +11,24 @@ from app.reading.schemas import (
     QuestionType,
     ModelVersion,
 )
+from datetime import datetime, timedelta
 from typing import List
 import random
+import json
 
 def generate_problems(
     data: GenerateSimilarQuestionRequest,
+    supabase_exp: Client
 ) -> List[CompleteGeneratedQuestion]:
     question_count = data.question_count
     generated_questions = []
+    category_questions = fetchSelectedQuestions(data.category, supabase_exp)
 
     for _ in range(question_count):
         generated_question = generate_sat_question(
             category=data.category,
-            example_question=data.example_question,
-            selection_passage_example=data.selection_passage_example,
+            example_question=random.choice(category_questions),
+            # got an error here for empty seq --> need to generate more.
         )
         generated_questions.append(generated_question)
 
@@ -35,13 +39,14 @@ def generate_problem_set(
     supabase_exp: Client
 ) -> List[CompleteProblemSet]:
     problem_count = data.question_count
-    category = "Linear Equations"
-    # category = data.category
+    category = data.category
     problem_category_id_list = ProblemIdOfGivenCategories(category, supabase_exp)
 
     problems_ids = supabase_exp.table("problems").select("id, question, explanation").execute()
     problem_set = []
     count = 0
+    # selected_cols = problems_ids.data
+    # problem_id = selected_cols["id"]
     for problems_id in problems_ids:
         if problems_id is None:
             break
@@ -89,6 +94,9 @@ def generate_test(
                             "Punctuations": 0.0325,        
                             "Transitions": 0.20
                         }
+                        sum_prob = 0
+                        for ratio in category_distribution.values():
+                            sum_prob += ratio
                         for category, ratio in category_distribution.items():
                             ratio = (ratio / sum_prob) * 100
                             num_questions_to_select = round(total_questions * ratio)
@@ -110,6 +118,9 @@ def generate_test(
                         "Punctuations": 0.0325,        
                         "Transitions": 0.20
                     }
+                    sum_prob = 0
+                    for ratio in category_distribution.values():
+                        sum_prob += ratio
                     for category, ratio in category_distribution.items():
                         ratio = (ratio / sum_prob) * 100
                         num_questions_to_select = round(total_questions * ratio)

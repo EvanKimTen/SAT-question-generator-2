@@ -32,20 +32,20 @@ def generate_problems(
     generated_questions = []
     category_questions = fetchSelectedQuestions(data.major_one_category, supabase_exp)
     for _ in range(question_count):
+        example_question = random.choice(category_questions)
         generated_question = generate_sat_question(
             major_one_category=data.major_one_category,
             major_two_category=data.major_two_category,
-            sub_one_category=data.sub_one_category,
-            sub_two_category=data.sub_two_category,
-            example_question=random.choice(category_questions),
+            major_three_category=data.major_three_category,
+            example_question=example_question,
             question_type=data.question_type,
         )
         
         solution_with_choices = solve_question(
-            example_question=generated_question.question,
+            example_question=example_question,
             question_type=data.question_type,
         )
-        print(solution_with_choices)
+        # print(solution_with_choices)
         complete_generated_question_data = {
             **generated_question.dict(),
             **solution_with_choices.dict(),
