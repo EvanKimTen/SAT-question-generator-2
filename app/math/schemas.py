@@ -264,6 +264,10 @@ class ModelVersion(Enum):
     V2 = "v2"
     V3 = "v3"
 
+class LevelsOfCategories(BaseModel):
+    level1: MajorCategory
+    # level2:
+    # level3: #
 
 class GenerateSimilarQuestionRequest(BaseModel):
     major_one_category: MajorCategory = Field()

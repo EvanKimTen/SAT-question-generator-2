@@ -59,7 +59,7 @@ def generate_problems(
 
         # Serialize the dictionary to a JSON string
         complete_generated_question_json = json.dumps(complete_generated_question_dict)
-        data = supabase_exp.table("problems").insert(complete_generated_question_json).execute()
+        data = supabase_exp.table("experiment_for_insertion").insert(complete_generated_question_json).execute()
         
         generated_questions.append(complete_generated_question)
 
@@ -89,131 +89,6 @@ def generate_problem_set(
                     count += 1
                     
     return problem_set
-
-def generate_test(    
-    data: GenerateTestSetRequest,
-    supabase_exp: Client
-) -> List[CompleteTestSet]:
-
-    test_set = []
-    total_questions = data.question_count
-    modules = supabase_exp.table("test_problems").select("module").execute() 
-    # More details needed for getting different module individually.
-    for extractor in modules:
-        if extractor is None:
-            break
-        for module in modules:
-            if module == "1":
-                category_distribution = {
-                    "Linear Equations" : 0.07,
-                    "Linear Function" : 0.07,
-                    "System of Equations" : 0.07,
-                    "Solving Inequalities" : 0.07,
-                    "Graphing Inequalities" : 0.07,
-                    "Absolute Value" : 0.038,
-                    "Exponential Equations" : 0.038,
-                    "Radical Equation and Function" : 0.038,
-                    "Complex Numbers" : 0.038,
-                    "Quadratic Equation" : 0.038,
-                    "Polynomial Equation" : 0.038,
-                    "Rational Equation" : 0.038,
-                    "Functions" : 0.038,
-                    "Transformation": 0.038,
-                    "Ratio, Rate, and Proportion" : 0.0375,
-                    "Percentage" : 0.0375,
-                    "Probability" :0.0375,
-                    "Statistics": 0.0375,
-                    "Angles, Triangles, and Polygons" : 0.0375,
-                    "Circle" : 0.0375,
-                    "Congruence and Similarity of Triangles" : 0.0375,
-                    "Polygon in plane / Circle Equation" : 0.0375,
-                    "Volume (feat. Surface Area)" : 0.0375,
-                    "Trigonometric Ratio" : 0.0375,
-                }
-                sum_prob = 0
-                for ratio in category_distribution.values():
-                    sum_prob += ratio
-                
-                for category, ratio in category_distribution.items():
-                    ratio = (ratio / sum_prob) * 100
-                    num_questions_to_select = round(total_questions * ratio)
-                    category_questions = fetchSelectedQuestions(category, supabase_exp)
-                    test_set.extend(random.sample(category_questions, num_questions_to_select))
-
-            elif module == "2-easy":
-                category_distribution = {
-                    "Linear Equations" : 0.07,
-                    "Linear Function" : 0.07,
-                    "System of Equations" : 0.07,
-                    "Solving Inequalities" : 0.07,
-                    "Graphing Inequalities" : 0.07,
-                    "Absolute Value " : 0.038,
-                    "Exponential Equations" : 0.038,
-                    "Radical Equation and Function" : 0.038,
-                    "Complex Numbers" : 0.038,
-                    "Quadratic Equation" : 0.038,
-                    "Polynomial Equation" : 0.038,
-                    "Rational Equation" : 0.038,
-                    "Functions" : 0.038,
-                    "Transformation": 0.038,
-                    "Ratio, Rate, and Proportion" : 0.0375,
-                    "Percentage" : 0.0375,
-                    "Probability" :0.0375,
-                    "Statistics": 0.0375,
-                    "Angles, Triangles, and Polygons" : 0.0375,
-                    "Circle" : 0.0375,
-                    "Congruence and Similarity of Triangles" : 0.0375,
-                    "Polygon in plane / Circle Equation" : 0.0375,
-                    "Volume (feat. Surface Area)" : 0.0375,
-                    "Trigonometric Ratio" : 0.0375,
-                }
-                sum_prob = 0
-                for ratio in category_distribution.values():
-                    sum_prob += ratio
-                
-                for category, ratio in category_distribution.items():
-                    ratio = (ratio / sum_prob) * 100
-                    num_questions_to_select = round(total_questions * ratio)
-                    category_questions = fetchSelectedQuestions(category, supabase_exp)
-                    test_set.extend(random.sample(category_questions, num_questions_to_select))
-
-            elif module == "2-hard":
-                category_distribution = {
-                    "Linear Equations" : 0.07,
-                    "Linear Function" : 0.07,
-                    "System of Equations" : 0.07,
-                    "Solving Inequalities" : 0.07,
-                    "Graphing Inequalities" : 0.07,
-                    "Absolute Value " : 0.038,
-                    "Exponential Equations" : 0.038,
-                    "Radical Equation and Function" : 0.038,
-                    "Complex Numbers" : 0.038,
-                    "Quadratic Equation" : 0.038,
-                    "Polynomial Equation" : 0.038,
-                    "Rational Equation" : 0.038,
-                    "Functions" : 0.038,
-                    "Transformation": 0.038,
-                    "Ratio, Rate, and Proportion" : 0.0375,
-                    "Percentage" : 0.0375,
-                    "Probability" :0.0375,
-                    "Statistics": 0.0375,
-                    "Angles, Triangles, and Polygons" : 0.0375,
-                    "Circle" : 0.0375,
-                    "Congruence and Similarity of Triangles" : 0.0375,
-                    "Polygon in plane / Circle Equation" : 0.0375,
-                    "Volume (feat. Surface Area)" : 0.0375,
-                    "Trigonometric Ratio" : 0.0375,
-                }
-                sum_prob = 0
-                for ratio in category_distribution.values():
-                    sum_prob += ratio
-                
-                for category, ratio in category_distribution.items():
-                    ratio = (ratio / sum_prob) * 100
-                    num_questions_to_select = round(total_questions * ratio)
-                    category_questions = fetchSelectedQuestions(category, supabase_exp)
-                    test_set.extend(random.sample(category_questions, num_questions_to_select))
-    return test_set
 
 def fetchSelectedQuestions(category, supabase_exp):
     problem_category_id_list = ProblemIdOfGivenCategories(category, supabase_exp)

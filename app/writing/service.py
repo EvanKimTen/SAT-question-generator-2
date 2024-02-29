@@ -1,12 +1,10 @@
 from fastapi import HTTPException
-from supabase import create_client, Client
+from supabase import Client
 from app.writing.schemas import (
     GenerateSimilarQuestionRequest,
     GenerateProblemSetRequest,
-    GenerateTestSetRequest,
     CompleteGeneratedQuestion,
     CompleteProblemSet,
-    CompleteTestSet,
     GeneratedQuestion,
 )
 
@@ -29,25 +27,10 @@ def generate_problems(
         complete_generated_question = generate_sat_question(
             category=data.category,
             example_question=random.choice(category_questions),
-        )
-
-        print(type(complete_generated_question))
-        created_at = datetime.utcnow() - timedelta(hours=2)
-        creation_date = {}
-        creation_date["id"] = 1
-        creation_date["created_at"] = str(created_at)
-        complete_generated_question_dict = complete_generated_question.dict()
-        creation_date.update(complete_generated_question_dict)
-        complete_generated_question_dict = creation_date
-        print(complete_generated_question_dict)
-        complete_generated_question_json = json.dumps(complete_generated_question_dict)
-        print(complete_generated_question_json)
-
-        data = supabase_exp.table("experiment_for_insertion").insert(complete_generated_question_json).execute()
-        print(data)
-        # if generated_question.error:
-        #     raise HTTPException(status_code=400, detail=generated_question.error.message)
-        generated_questions.append(complete_generated_question)
+        )        
+        complete_generated_question_dict = complete_generated_question.dict()    
+        data = supabase_exp.table("experiment_for_insertion").insert(complete_generated_question_dict).execute()
+        generated_questions.append(complete_generated_question_dict)
 
     return generated_questions
 
@@ -80,8 +63,8 @@ def generate_problem_set(
         list_prob_set.append(complete_generated_question)
 
     # making complete problem set.
-    created_at = datetime.utcnow() - timedelta(hours=2)
-    creation_date = {"created_at": str(created_at)}
+    # created_at = datetime.utcnow() - timedelta(hours=2)
+    # creation_date = {"created_at": str(created_at)}
     complete_problem_set = CompleteProblemSet(
         name="New Problem Set",
         is_full_test=False,
@@ -93,91 +76,6 @@ def generate_problem_set(
     print(type(complete_problem_set))
     return complete_problem_set
 
-def generate_test(
-    data: GenerateTestSetRequest,
-    supabase_exp: Client
-) -> List[CompleteTestSet]:
-    test_set = []
-    total_questions = data.question_count
-
-    extracted_module = supabase_exp.table("test_problems").select("module").execute() 
-    # More details needed for getting different module individually.
-    modules = extracted_module.data
-    
-    for module in modules:
-        if module['module'] == '1':
-                category_distribution = {
-                    "Craft & Structure" : 0.28,
-                    "Accomplishing the Goal": 0.26,
-                    "Subject-verb Agreement": 0.0325,
-                    "Pronoun-Antecedent Agreement": 0.0325,
-                    "Verb forms - Tense": 0.0325,
-                    "Verb forms - Finite vs. Non-finite": 0.0325,
-                    "Subject-Modifier Placement": 0.0325,
-                    "Plural and possessive nouns": 0.0325,
-                    "Linking clauses": 0.0325,
-                    "Supplements": 0.0325,
-                    "Punctuations": 0.0325,        
-                    "Transitions": 0.20
-                }
-                sum_prob = 0
-                for ratio in category_distribution.values():
-                    sum_prob += ratio
-                for category, ratio in category_distribution.items():
-                    ratio = (ratio / sum_prob) * 100
-                    num_questions_to_select = round(total_questions * ratio)
-                    category_questions = fetchSelectedQuestions(category, supabase_exp)
-                    test_set.extend(random.sample(category_questions, num_questions_to_select))
-                    # should generate more problems then gonna be resolved.
-
-        elif module == "2-easy":
-            category_distribution = {
-                "Craft & Structure" : 0.28, #
-                "Accomplishing the Goal": 0.26,
-                "Subject-verb Agreement": 0.0325,
-                "Pronoun-Antecedent Agreement": 0.0325,
-                "Verb forms - Tense": 0.0325,
-                "Verb forms - Finite vs. Non-finite": 0.0325,
-                "Subject-Modifier Placement": 0.0325,
-                "Plural and possessive nouns": 0.0325,
-                "Linking clauses": 0.0325,
-                "Supplements": 0.0325,
-                "Punctuations": 0.0325,        
-                "Transitions": 0.20
-            }
-            sum_prob = 0
-            for ratio in category_distribution.values():
-                sum_prob += ratio
-            for category, ratio in category_distribution.items():
-                ratio = (ratio / sum_prob) * 100
-                num_questions_to_select = round(total_questions * ratio)
-                category_questions = fetchSelectedQuestions(category, supabase_exp)
-                test_set.extend(random.sample(category_questions, num_questions_to_select))
-
-        elif module == "2-hard":
-            category_distribution = {
-                "Craft & Structure" : 0.28, #
-                "Accomplishing the Goal": 0.26,
-                "Subject-verb Agreement": 0.0325,
-                "Pronoun-Antecedent Agreement": 0.0325,
-                "Verb forms - Tense": 0.0325,
-                "Verb forms - Finite vs. Non-finite": 0.0325,
-                "Subject-Modifier Placement": 0.0325,
-                "Plural and possessive nouns": 0.0325,
-                "Linking clauses": 0.0325,
-                "Supplements": 0.0325,
-                "Punctuations": 0.0325,        
-                "Transitions": 0.20
-            }
-            sum_prob = 0
-            for ratio in category_distribution.values():
-                sum_prob += ratio
-            for category, ratio in category_distribution.items():
-                ratio = (ratio / sum_prob) * 100
-                num_questions_to_select = round(total_questions * ratio)
-                category_questions = fetchSelectedQuestions(category, supabase_exp)
-                test_set.extend(random.sample(category_questions, num_questions_to_select))
-    return test_set
 
 def fetchSelectedQuestions(category, supabase_exp):
     problem_category_id_list = ProblemIdOfGivenCategories(category, supabase_exp)
