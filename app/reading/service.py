@@ -40,7 +40,7 @@ def generate_problem_set(
 ) -> List[CompleteProblemSet]:
     problem_count = data.question_count
     category = data.category
-    problem_category_id_list = ProblemIdOfGivenCategories(category, supabase_exp)
+    problem_category_id_list = ProblemsIdOfGivenCategories(category, supabase_exp)
 
     problems_ids = supabase_exp.table("problems").select("id, question, explanation").execute()
     problem_set = []

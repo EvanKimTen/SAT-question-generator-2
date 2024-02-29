@@ -55,11 +55,7 @@ def generate_problem_set(
     data: GenerateProblemSetRequest,
     supabase_exp: Client
 ) -> List[CompleteProblemSet]:
-    """
-
-    """
     problem_count = data.question_count # 54
-    
     category = data.category
     problem_category_id_list = ProblemIdOfGivenCategories(category, supabase_exp)
 
@@ -67,7 +63,6 @@ def generate_problem_set(
     problems_ids_data = problems_ids.data
     problem_set = []
     count = 0
-    
     for category_id in problems_ids_data:
         for category_id_l in problem_category_id_list:
             if problem_count == count:
@@ -87,7 +82,6 @@ def generate_problem_set(
     # making complete problem set.
     created_at = datetime.utcnow() - timedelta(hours=2)
     creation_date = {"created_at": str(created_at)}
-    
     complete_problem_set = CompleteProblemSet(
         name="New Problem Set",
         is_full_test=False,
