@@ -60,8 +60,7 @@ def generate_problems(
         # Serialize the dictionary to a JSON string
         complete_generated_question_json = json.dumps(complete_generated_question_dict)
         data = supabase_exp.table("problems").insert(complete_generated_question_json).execute()
-        # if complete_generated_question.error:
-        #     raise HTTPException(status_code=400, detail=generated_question.error.message)
+        
         generated_questions.append(complete_generated_question)
 
     return generated_questions # return type: list of an instance of completeGeneratedQuestions.
@@ -79,20 +78,16 @@ def generate_problem_set(
     problem_set = []
     problem_count = 2
     count = 0
-    for problems_id in problems_ids:
-        if problems_id is None:
-            break
-        prob_ids = problems_id[1]
-        if prob_ids is not None:
-            for category_id in prob_ids:
-                for category_id_l in problem_category_id_list:
-                    if problem_count == count:
-                        break
-                    if category_id['id'] == category_id_l:
-                        if category_id not in problem_set:
-                            problem_set.append(category_id)
-                            count += 1
-                            
+
+    for category_id in problems_ids:
+        for category_id_l in problem_category_id_list:
+            if problem_count == count:
+                break
+            if category_id['id'] == category_id_l:
+                if category_id not in problem_set:
+                    problem_set.append(category_id)
+                    count += 1
+                    
     return problem_set
 
 def generate_test(    
@@ -224,44 +219,35 @@ def fetchSelectedQuestions(category, supabase_exp):
     problem_category_id_list = ProblemIdOfGivenCategories(category, supabase_exp)
 
     problems_ids = supabase_exp.table("problems").select("id, question").execute()
+    problems_ids_data = problems_ids.data
     questions = []
-    for problems_id in problems_ids:
-        if problems_id is None:
-            break
-        prob_ids = problems_id[1]
-        if prob_ids is not None:
-            for category_id in prob_ids:
-                for category_id_l in problem_category_id_list:
-                    if category_id['id'] == category_id_l:
-                        if category_id not in questions:
-                            questions.append(category_id)
-    
+
+    for category_id in problems_ids_data:
+        for category_id_l in problem_category_id_list:
+            if category_id['id'] == category_id_l:
+                if category_id not in questions:
+                    questions.append(category_id)
+
     return questions
 
 def ProblemIdOfGivenCategories(category, supabase_exp):
     
     problem_problem_categories_ids = supabase_exp.table("problem_problem_categories").select("problem_id, category_id").execute()
-    problem_category_id_list = []
     problem_categories = supabase_exp.table("problem_categories").select("id, level1").execute()
+    problem_problem_categories_ids_data = problem_problem_categories_ids.data
+    problem_categories_data = problem_categories.data
+    problem_category_id_list = []
     category_id_list = []
-    for problem_category in problem_categories:
-        if problem_category is None:
-            break
-        categories = problem_category[1]
-        if categories is not None:
-            for retrived_category in categories:
-                if retrived_category['level1'] == category:
-                    category_id_list.append(retrived_category['id'])
 
-    for problem_problem_categories_id in problem_problem_categories_ids:
-        if problem_problem_categories_id is None:
-            break
-        category_ids = problem_problem_categories_id[1]
-        if category_ids is not None:
-            for category_id in category_ids:
-                for category_id_l in category_id_list:
-                    if category_id['category_id'] == category_id_l:
-                        problem_category_id_list.append(category_id['problem_id'])
+    for retrived_category in problem_categories_data:
+        if retrived_category['level1'] == category:
+            category_id_list.append(retrived_category['id'])
+
+    
+    for category_id in problem_problem_categories_ids_data:
+        for category_id_l in category_id_list:
+            if category_id['category_id'] == category_id_l:
+                problem_category_id_list.append(category_id['problem_id'])
 
     return problem_category_id_list
 

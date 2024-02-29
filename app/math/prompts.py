@@ -3,7 +3,7 @@ math_generate_prompt = """
     
     first major catgory: {major_one_category}
     second major category: {major_two_category}
-    three major category: {major_three_category}
+    third major category: {major_three_category}
     question_type: {question_type}
     example question: {example_question}
     output format:{format_instructions}

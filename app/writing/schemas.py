@@ -1,6 +1,6 @@
 from pydantic import BaseModel, conint, Field, UUID1
 from enum import Enum
-from typing import Optional
+from typing import Optional, List
 
 
 class Category(str, Enum):
@@ -43,7 +43,7 @@ class ModelVersion(Enum):
 class GenerateSimilarQuestionRequest(BaseModel):
     category: Category
     question_count: conint(ge=1, le=5) = Field(example=1)
-
+    
 class GenerateProblemSetRequest(BaseModel):
     category: Category
     question_count: conint(ge=1, le=5) = Field(example=1)
@@ -59,8 +59,10 @@ class Module(str, Enum):
     NEXT_HARD ="2-hard"
 
 class GeneratedQuestion(BaseModel):
+    id: int
     question: str
-    type: QuestionType
+    explanation: str
+    # type: QuestionType
 
 
 class SolutionWithChoices(BaseModel):
@@ -84,10 +86,12 @@ class CompleteGeneratedQuestion(BaseModel):
 
 class CompleteProblemSet(BaseModel):
     name: str = Field(default="New Problem Set")
-    is_full_test: bool = Field(example=False)
-    user_id: UUID1
+    is_full_test: bool
+    user_id: str
+    set: List[GeneratedQuestion]
 
 class CompleteTestSet(BaseModel):
     name: str = Field(default="New Test")
     is_full_test: bool = Field(example=True)
     user_id: UUID1
+    set: List[GeneratedQuestion]

@@ -1,5 +1,5 @@
 from langchain.output_parsers import PydanticOutputParser
-from app.math.schemas import (
+from app.writing.schemas import (
     CompleteGeneratedQuestion,
 )
 
@@ -7,3 +7,4 @@ from app.math.schemas import (
 complete_generated_question_parser = PydanticOutputParser(
     pydantic_object=CompleteGeneratedQuestion
 )
+

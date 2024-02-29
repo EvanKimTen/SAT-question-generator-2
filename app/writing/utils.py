@@ -32,9 +32,10 @@ def generate_sat_question(
         example_question=example_question,
     )
     output = chat_model(_input.to_messages())
-    # print(output.content)
     # print(output)
+    # print(type(output.content))
     res = complete_generated_question_parser.parse(output.content)
+    # print(res)
     return res
 
 

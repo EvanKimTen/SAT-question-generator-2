@@ -33,7 +33,7 @@ async def generate_similar_problem(
     return result
 
 @router.post(
-    "/problem_set_generation", response_model=List[CompleteProblemSet]
+    "/problem_set_generation", response_model=CompleteProblemSet
 )
 async def problem_set_generation(
     request: GenerateProblemSetRequest,
