@@ -1,6 +1,7 @@
 from pydantic import BaseModel, conint, Field
 from enum import Enum
-from typing import Optional
+from typing import Optional, List
+from uuid import UUID
 
 
 class Category(str, Enum):
@@ -264,15 +265,20 @@ class ModelVersion(Enum):
     V2 = "v2"
     V3 = "v3"
 
-class LevelsOfCategories(BaseModel):
-    level1: MajorCategory
-    # level2:
-    # level3: #
+# class LevelsOfCategories(BaseModel):
+#     level1: MajorCategory
+#     level2: subcategory_data[level1]
+    # level3:
 
 class GenerateSimilarQuestionRequest(BaseModel):
-    major_one_category: MajorCategory = Field()
-    major_two_category: Optional[MajorCategory] = Field()
-    major_three_category: Optional[MajorCategory] = Field()
+    first_level_1: MajorCategory = Field()
+    first_level_2: str = Field() 
+
+    second_level_1: Optional[MajorCategory] = Field()
+    second_level_2: Optional[str] = Field()  
+
+    third_level_1: Optional[MajorCategory] = Field()
+    third_level_2: Optional[str] = Field()
     question_type: QuestionType
     question_count: conint(ge=1, le=5) = Field(example=1)
 
@@ -285,8 +291,9 @@ class GenerateTestSetRequest(BaseModel):
     question_count: conint(ge=1) = Field(example=1)
 
 class GeneratedQuestion(BaseModel):
+    id: int
     question: str
-    type: QuestionType
+    explanation: str
 
 
 class SolutionWithChoices(BaseModel):
@@ -309,13 +316,10 @@ class CompleteGeneratedQuestion(BaseModel):
     solution: Optional[str]
     
 class CompleteProblemSet(BaseModel):
-    question: str
-    explanation: str
-
-
-class CompleteTestSet(BaseModel):
-    name: str
+    name: str = Field(default="New Problem Set")
     is_full_test: bool
+    # user_id: int
+    set: List[GeneratedQuestion]
 
 
 class SolveQuestionSympyRequest(BaseModel):

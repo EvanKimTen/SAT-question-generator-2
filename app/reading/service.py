@@ -3,10 +3,8 @@ from supabase import Client
 from app.reading.schemas import (
     GenerateSimilarQuestionRequest,
     GenerateProblemSetRequest,
-    GenerateTestSetRequest,
     CompleteGeneratedQuestion,
     CompleteProblemSet,
-    CompleteTestSet,
     Category,
     QuestionType,
     ModelVersion,
@@ -63,95 +61,7 @@ def generate_problem_set(
                             
     return problem_set
 
-def generate_test(
-    data: GenerateTestSetRequest,
-    supabase_exp: Client
-) -> List[CompleteTestSet]:
-    test_set = []
-    total_questions = data.question_count
 
-    extracted = supabase_exp.table("test_problems").select("module").execute() 
-    # More details needed for getting different module individually.
-
-    for extractor in extracted:
-        if extractor is None:
-            break
-        modules = extractor[1]
-        if modules is not None:
-            for module in modules:
-                if module['module'] == '1':
-                        category_distribution = {
-                            "Craft & Structure" : 0.28,
-                            "Accomplishing the Goal": 0.26,
-                            "Subject-verb Agreement": 0.0325,
-                            "Pronoun-Antecedent Agreement": 0.0325,
-                            "Verb forms - Tense": 0.0325,
-                            "Verb forms - Finite vs. Non-finite": 0.0325,
-                            "Subject-Modifier Placement": 0.0325,
-                            "Plural and possessive nouns": 0.0325,
-                            "Linking clauses": 0.0325,
-                            "Supplements": 0.0325,
-                            "Punctuations": 0.0325,        
-                            "Transitions": 0.20
-                        }
-                        sum_prob = 0
-                        for ratio in category_distribution.values():
-                            sum_prob += ratio
-                        for category, ratio in category_distribution.items():
-                            ratio = (ratio / sum_prob) * 100
-                            num_questions_to_select = round(total_questions * ratio)
-                            category_questions = fetchSelectedQuestions(category, supabase_exp)
-                            test_set.extend(random.sample(category_questions, num_questions_to_select))
-
-                elif module == "2-easy":
-                    category_distribution = {
-                        "Craft & Structure" : 0.28, #
-                        "Accomplishing the Goal": 0.26,
-                        "Subject-verb Agreement": 0.0325,
-                        "Pronoun-Antecedent Agreement": 0.0325,
-                        "Verb forms - Tense": 0.0325,
-                        "Verb forms - Finite vs. Non-finite": 0.0325,
-                        "Subject-Modifier Placement": 0.0325,
-                        "Plural and possessive nouns": 0.0325,
-                        "Linking clauses": 0.0325,
-                        "Supplements": 0.0325,
-                        "Punctuations": 0.0325,        
-                        "Transitions": 0.20
-                    }
-                    sum_prob = 0
-                    for ratio in category_distribution.values():
-                        sum_prob += ratio
-                    for category, ratio in category_distribution.items():
-                        ratio = (ratio / sum_prob) * 100
-                        num_questions_to_select = round(total_questions * ratio)
-                        category_questions = fetchSelectedQuestions(category, supabase_exp)
-                        test_set.extend(random.sample(category_questions, num_questions_to_select))
-
-                elif module == "2-hard":
-                    category_distribution = {
-                        "Craft & Structure" : 0.28, #
-                        "Accomplishing the Goal": 0.26,
-                        "Subject-verb Agreement": 0.0325,
-                        "Pronoun-Antecedent Agreement": 0.0325,
-                        "Verb forms - Tense": 0.0325,
-                        "Verb forms - Finite vs. Non-finite": 0.0325,
-                        "Subject-Modifier Placement": 0.0325,
-                        "Plural and possessive nouns": 0.0325,
-                        "Linking clauses": 0.0325,
-                        "Supplements": 0.0325,
-                        "Punctuations": 0.0325,        
-                        "Transitions": 0.20
-                    }
-                    sum_prob = 0
-                    for ratio in category_distribution.values():
-                        sum_prob += ratio
-                    
-                    for category, ratio in category_distribution.items():
-                        ratio = (ratio / sum_prob) * 100
-                        num_questions_to_select = round(total_questions * ratio)
-                        category_questions = fetchSelectedQuestions(category, supabase_exp)
-                        test_set.extend(random.sample(category_questions, num_questions_to_select))
-    return test_set
 
 def fetchSelectedQuestions(category, supabase_exp):
     problem_category_id_list = ProblemsIdOfGivenCategories(category, supabase_exp)

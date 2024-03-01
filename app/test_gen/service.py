@@ -1,18 +1,19 @@
 from supabase import Client
-from app.writing.schemas import (
-    GenerateTestSetRequest,
-    CompleteTestSet,
+from app.test_gen.schema import (
+    CompleteTestSet
 )
-import random
 from app.test_gen.distribution_preset import math_category_distribution, english_category_distribution
+from app.users.schema import CurrentUserData, UserCreateInput, UserData
+import random
 
 def generate_test(
-    supabase_exp: Client
+    supabase: Client,
+    current_user: UserData
 ) -> CompleteTestSet:
     test_set = []
     total_questions = 140
 
-    extracted_module = supabase_exp.table("test_problems").select("module, subject").execute() 
+    extracted_module = supabase.table("test_problems").select("module, subject").execute() 
     # More details needed for getting different module individually.
     modules = extracted_module.data
 
@@ -25,7 +26,7 @@ def generate_test(
             for category, ratio in math_category_distribution.items():
                 ratio = (ratio / sum_prob) * 100
                 num_questions_to_select = round(total_questions * ratio)
-                category_questions = fetchSelectedQuestions(category, supabase_exp)
+                category_questions = fetchSelectedQuestions(category, supabase)
                 test_set.extend(random.sample(category_questions, num_questions_to_select))
 
         elif module == "2-easy":
@@ -36,7 +37,7 @@ def generate_test(
             for category, ratio in math_category_distribution.items():
                 ratio = (ratio / sum_prob) * 100
                 num_questions_to_select = round(total_questions * ratio)
-                category_questions = fetchSelectedQuestions(category, supabase_exp)
+                category_questions = fetchSelectedQuestions(category, supabase)
                 test_set.extend(random.sample(category_questions, num_questions_to_select))
 
         elif module == "2-hard":
@@ -47,7 +48,7 @@ def generate_test(
             for category, ratio in math_category_distribution.items():
                 ratio = (ratio / sum_prob) * 100
                 num_questions_to_select = round(total_questions * ratio)
-                category_questions = fetchSelectedQuestions(category, supabase_exp)
+                category_questions = fetchSelectedQuestions(category, supabase)
                 test_set.extend(random.sample(category_questions, num_questions_to_select))
 
     for module in modules:
@@ -58,7 +59,7 @@ def generate_test(
             for category, ratio in english_category_distribution.items():
                 ratio = (ratio / sum_prob) * 100
                 num_questions_to_select = round(total_questions * ratio)
-                category_questions = fetchSelectedQuestions(category, supabase_exp)
+                category_questions = fetchSelectedQuestions(category, supabase)
                 test_set.extend(random.sample(category_questions, num_questions_to_select))
                 # generating more problems then gonna be resolved.
 
@@ -69,7 +70,7 @@ def generate_test(
             for category, ratio in english_category_distribution.items():
                 ratio = (ratio / sum_prob) * 100
                 num_questions_to_select = round(total_questions * ratio)
-                category_questions = fetchSelectedQuestions(category, supabase_exp)
+                category_questions = fetchSelectedQuestions(category, supabase)
                 test_set.extend(random.sample(category_questions, num_questions_to_select))
 
         elif module == "2-hard":
@@ -79,13 +80,15 @@ def generate_test(
             for category, ratio in english_category_distribution.items():
                 ratio = (ratio / sum_prob) * 100
                 num_questions_to_select = round(total_questions * ratio)
-                category_questions = fetchSelectedQuestions(category, supabase_exp)
+                category_questions = fetchSelectedQuestions(category, supabase)
                 test_set.extend(random.sample(category_questions, num_questions_to_select))
-    return test_set
+        # test_set["user_id"] = current_user.id
+        # CompleteTestSet.parse_obj(test_set)
+    return None
 
-def ProblemIdOfGivenCategories(category, supabase_exp):
-    problem_problem_categories_ids = supabase_exp.table("problem_problem_categories").select("problem_id, category_id").execute()
-    problem_categories = supabase_exp.table("problem_categories").select("id, level1").execute()
+def ProblemIdOfGivenCategories(category, supabase):
+    problem_problem_categories_ids = supabase.table("problem_problem_categories").select("problem_id, category_id").execute()
+    problem_categories = supabase.table("problem_categories").select("id, level1").execute()
     problem_problem_categories_ids_data = problem_problem_categories_ids.data
     problem_categories_data = problem_categories.data
     problem_category_id_list = []
@@ -104,10 +107,10 @@ def ProblemIdOfGivenCategories(category, supabase_exp):
     return problem_category_id_list
 
 
-def fetchSelectedQuestions(category, supabase_exp):
-    problem_category_id_list = ProblemIdOfGivenCategories(category, supabase_exp)
+def fetchSelectedQuestions(category, supabase):
+    problem_category_id_list = ProblemIdOfGivenCategories(category, supabase)
 
-    problems_ids = supabase_exp.table("problems").select("id, question").execute()
+    problems_ids = supabase.table("problems").select("id, question").execute()
     problems_ids_data = problems_ids.data
     questions = []
 

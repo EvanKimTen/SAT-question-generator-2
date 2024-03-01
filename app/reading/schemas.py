@@ -29,10 +29,6 @@ class GenerateProblemSetRequest(BaseModel):
     question_count: conint(ge=1, le=5) = Field(example=1)
 
 
-class GenerateTestSetRequest(BaseModel):
-    category: Category
-    question_count: conint(ge=1, le=5) = Field(example=1)
-
 
 class GeneratedQuestion(BaseModel):
     question: str
@@ -70,9 +66,6 @@ class CompleteProblemSet(BaseModel):
     question: str
     explanation: str
 
-class CompleteTestSet(BaseModel):
-    question: str
-    explanation: str
     
 class Module(str, Enum):
     INITIAL = "1"

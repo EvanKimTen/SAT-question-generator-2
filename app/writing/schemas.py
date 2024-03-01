@@ -1,4 +1,5 @@
-from pydantic import BaseModel, conint, Field, UUID1
+from pydantic import BaseModel, conint, Field
+from uuid import UUID
 from enum import Enum
 from typing import Optional, List
 
@@ -87,11 +88,11 @@ class CompleteGeneratedQuestion(BaseModel):
 class CompleteProblemSet(BaseModel):
     name: str = Field(default="New Problem Set")
     is_full_test: bool
-    user_id: str
+    # user_id: int
     set: List[GeneratedQuestion]
 
-class CompleteTestSet(BaseModel):
-    name: str = Field(default="New Test")
-    is_full_test: bool = Field(example=True)
-    user_id: UUID1
-    set: List[GeneratedQuestion]
+# class CompleteTestSet(BaseModel):
+#     name: str = Field(default="New Test")
+#     is_full_test: bool = Field(example=True)
+#     user_id: UUID
+#     set: List[GeneratedQuestion]

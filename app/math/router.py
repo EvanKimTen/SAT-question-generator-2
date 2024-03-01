@@ -6,7 +6,6 @@ from app.math.schemas import (
     GenerateTestSetRequest,
     CompleteGeneratedQuestion,
     CompleteProblemSet,
-    CompleteTestSet,
     MajorCategory,
     QuestionType,
     ModelVersion,
@@ -40,14 +39,4 @@ async def problem_set_generation(
     # current_user = Depends(get_current_user_authorizer()),
 ):
     result = math_service.generate_problem_set(request, supabase_exp)
-    return result
-
-@router.post(
-    "/test_set_generation", response_model=List[CompleteTestSet]
-)
-async def test_generation(
-    request: GenerateTestSetRequest,
-    # current_user = Depends(get_current_user_authorizer()),
-):
-    result = math_service.generate_test(request, supabase_exp)
     return result

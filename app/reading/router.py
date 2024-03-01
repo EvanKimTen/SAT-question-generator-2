@@ -3,10 +3,8 @@ from supabase import create_client, Client
 from app.reading.schemas import (
     GenerateSimilarQuestionRequest,
     GenerateProblemSetRequest,
-    GenerateTestSetRequest,
     CompleteGeneratedQuestion,
     CompleteProblemSet,
-    CompleteTestSet,
 )
 from typing import List
 
@@ -35,14 +33,4 @@ async def problem_set_generation(
     request: GenerateProblemSetRequest,
 ):
     result = reading_service.generate_problem_set(request, supabase_exp)
-    return result
-
-@router.post(
-    "/test_generation", response_model=List[CompleteTestSet]
-) 
-async def test_generation(
-    request: GenerateTestSetRequest,
-    # current_user = Depends(get_current_user_authorizer()),
-):
-    result = reading_service.generate_test(request, supabase_exp)
     return result
