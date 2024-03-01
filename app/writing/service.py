@@ -31,7 +31,7 @@ def generate_problems(
         )
         print(current_user.username)       
         complete_generated_question_dict = complete_generated_question.dict()    
-        data = supabase.table("experiment_for_insertion").insert(complete_generated_question_dict).execute()
+        data = supabase.table("exp_insertion_problem_gen").insert(complete_generated_question_dict).execute()
         generated_questions.append(complete_generated_question_dict)
 
     return generated_questions
@@ -72,7 +72,6 @@ def generate_problem_set(
     )
     complete_problem_set_dict = complete_problem_set.dict()
     data = supabase.table("exp_insertion_problem_set").insert(complete_problem_set_dict).execute()
-    print(type(complete_problem_set))
     return complete_problem_set
 
 

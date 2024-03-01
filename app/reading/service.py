@@ -5,6 +5,7 @@ from app.reading.schemas import (
     GenerateProblemSetRequest,
     CompleteGeneratedQuestion,
     CompleteProblemSet,
+    QuestionInsideSet,
     Category,
     QuestionType,
     ModelVersion,
@@ -16,11 +17,11 @@ import json
 
 def generate_problems(
     data: GenerateSimilarQuestionRequest,
-    supabase_exp: Client
+    supabase: Client
 ) -> List[CompleteGeneratedQuestion]:
     question_count = data.question_count
     generated_questions = []
-    category_questions = fetchSelectedQuestions(data.category, supabase_exp)
+    category_questions = fetchSelectedQuestions(data.category, supabase)
 
     for _ in range(question_count):
         generated_question = generate_sat_question(
@@ -34,39 +35,50 @@ def generate_problems(
 
 def generate_problem_set(
     data: GenerateProblemSetRequest,
-    supabase_exp: Client
-) -> List[CompleteProblemSet]:
+    supabase: Client
+) -> CompleteProblemSet:
     problem_count = data.question_count
     category = data.category
-    problem_category_id_list = ProblemsIdOfGivenCategories(category, supabase_exp)
+    problem_category_id_list = ProblemsIdOfGivenCategories(category, supabase)
 
-    problems_ids = supabase_exp.table("problems").select("id, question, explanation").execute()
+    problems_ids = supabase.table("problems").select("id, question, explanation").execute()
     problem_set = []
     count = 0
-    # selected_cols = problems_ids.data
-    # problem_id = selected_cols["id"]
-    for problems_id in problems_ids:
-        if problems_id is None:
-            break
-        prob_ids = problems_id[1]
-        if prob_ids is not None:
-            for category_id in prob_ids:
-                for category_id_l in problem_category_id_list:
-                    if problem_count == count:
-                        break
-                    if category_id['id'] == category_id_l:
-                        if category_id not in problem_set:
-                            problem_set.append(category_id)
-                            count += 1
-                            
-    return problem_set
+    problems_ids_data = problems_ids.data
+
+    for category_id in problems_ids_data:
+        for category_id_l in problem_category_id_list:
+            if problem_count == count:
+                break
+            if category_id['id'] == category_id_l:
+                if category_id not in problem_set:
+                    problem_set.append(category_id)
+                    count += 1
+    list_prob_set = []
+    for problem in problem_set:
+        complete_generated_question = QuestionInsideSet.parse_obj(
+            problem
+        )
+        list_prob_set.append(complete_generated_question)
+    print(list_prob_set)
+    # making complete problem set.
+    
+    complete_problem_set = CompleteProblemSet(
+        name="New Problem Set",
+        is_full_test=False,
+        # user_id=12,
+        set=list_prob_set 
+    )
+    complete_problem_set_dict = complete_problem_set.dict()
+    data = supabase.table("exp_insertion_problem_set").insert(complete_problem_set_dict).execute()
+    return complete_problem_set
 
 
 
-def fetchSelectedQuestions(category, supabase_exp):
-    problem_category_id_list = ProblemsIdOfGivenCategories(category, supabase_exp)
+def fetchSelectedQuestions(category, supabase):
+    problem_category_id_list = ProblemsIdOfGivenCategories(category, supabase)
 
-    problems_ids = supabase_exp.table("problems").select("id, question").execute()
+    problems_ids = supabase.table("problems").select("id, question").execute()
     problems_ids_data = problems_ids.data
     questions = []
 
@@ -78,10 +90,10 @@ def fetchSelectedQuestions(category, supabase_exp):
     
     return questions
 
-def ProblemsIdOfGivenCategories(category, supabase_exp):
+def ProblemsIdOfGivenCategories(category, supabase):
     
-    problem_problem_categories_ids = supabase_exp.table("problem_problem_categories").select("problem_id, category_id").execute()
-    problem_categories = supabase_exp.table("problem_categories").select("id, level1").execute()
+    problem_problem_categories_ids = supabase.table("problem_problem_categories").select("problem_id, category_id").execute()
+    problem_categories = supabase.table("problem_categories").select("id, level1").execute()
     problem_problem_categories_ids_data = problem_problem_categories_ids.data
     problem_categories_data = problem_categories.data
     problem_category_id_list = []

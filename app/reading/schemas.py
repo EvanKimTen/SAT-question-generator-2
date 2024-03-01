@@ -3,11 +3,13 @@ from enum import Enum
 from typing import Optional
 from pydantic import BaseModel
 
+from typing import List
 class Category(str, Enum):
     FUNCTION_LIT = "Function - Literature"
     FUNCTION_SCI_SS = "Function - Sci / SS"
     PURPOSE_SCI_SS = "Purpose - Sci / SS"
     PURPOSE_LIT = "Purpose - Literature"
+    LITERARY_EVIDENCE = "Literary Evidence"
 
 class QuestionType(str, Enum):
     MULTIPLE_CHOICE = "Multiple Choice"
@@ -21,7 +23,6 @@ class ModelVersion(Enum):
 
 class GenerateSimilarQuestionRequest(BaseModel):
     category: Category
-    example_question: Optional[str]
     question_count: conint(ge=1, le=5) = Field(example=1)
 
 class GenerateProblemSetRequest(BaseModel):
@@ -39,6 +40,10 @@ class GeneratedQuestion(BaseModel):
     correct_choice: str
     solution: str
 
+class QuestionInsideSet(BaseModel):
+    id: int
+    question: str
+    explanation: str
     
 class SolutionWithChoices(BaseModel):
     choice_a: str
@@ -62,9 +67,10 @@ class CompleteGeneratedQuestion(BaseModel):
     solution: str
 
 class CompleteProblemSet(BaseModel):
-    id: int
-    question: str
-    explanation: str
+    name: str = Field(default="New Problem Set")
+    is_full_test: bool
+    # user_id: int
+    set: List[QuestionInsideSet]
 
     
 class Module(str, Enum):

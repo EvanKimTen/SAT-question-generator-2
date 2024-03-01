@@ -14,7 +14,7 @@ from app.auth.service import get_current_user_authorizer
 from app.users.schema import CurrentUserData, UserCreateInput, UserData
 
 router = APIRouter(prefix="/writing", tags=["Writing"])
-supabase_exp: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 @router.post(
     "/problem_generation", response_model=List[CompleteGeneratedQuestion]
@@ -23,7 +23,7 @@ async def generate_similar_problem(
     request: GenerateSimilarQuestionRequest,
     current_user: UserData = Depends(get_current_user_authorizer()),
 ):
-    results = writing_service.generate_problems(request, supabase_exp, current_user)
+    results = writing_service.generate_problems(request, supabase, current_user)
     return results
 
 
@@ -33,5 +33,5 @@ async def generate_similar_problem(
 async def problem_set_generation(
     request: GenerateProblemSetRequest,
 ):
-    result = writing_service.generate_problem_set(request, supabase_exp)
+    result = writing_service.generate_problem_set(request, supabase)
     return result
