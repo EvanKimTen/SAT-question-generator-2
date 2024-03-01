@@ -26,7 +26,7 @@ def generate_problems(
     for _ in range(question_count):
         generated_question = generate_sat_question(
             category=data.category,
-            example_question=data.example_question,
+            example_question=category_questions,
             # got an error here for empty seq --> need to generate more.
         )
         generated_questions.append(generated_question)

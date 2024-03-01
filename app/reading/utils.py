@@ -106,11 +106,12 @@ def generate_sat_question(
         llm = ChatOpenAI
         chain = LLMChain(llm=llm, prompt=JSON_FORMAT_FIX_PROMPT)
         res = chain.run(bad_response=output, error_msg=str(e))
-    print(res)
     # add selected_passage to the response
     res_dict = res.dict()
+
     res_dict['passage'] = selected_passage
-    data = supabase.table("experiment_for_insertion").insert(res_dict).execute() # using this table for experiment and be adjusted for the correct one    
+    print(res_dict)
+    data = supabase.table("exp_insertion_problem_gen").insert(res_dict).execute() # using this table for experiment and be adjusted for the correct one    
     complete_generated_question = CompleteGeneratedQuestion.parse_obj(res_dict)
 
     return complete_generated_question

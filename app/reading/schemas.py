@@ -24,7 +24,7 @@ class ModelVersion(Enum):
 class GenerateSimilarQuestionRequest(BaseModel):
     category: Category
     question_count: conint(ge=1, le=5) = Field(example=1)
-
+    # example_question: str
 class GenerateProblemSetRequest(BaseModel):
     category: Category
     question_count: conint(ge=1, le=5) = Field(example=1)
