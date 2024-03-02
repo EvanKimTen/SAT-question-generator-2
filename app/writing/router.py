@@ -21,7 +21,7 @@ supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 ) 
 async def generate_similar_problem(
     request: GenerateSimilarQuestionRequest,
-    # current_user: UserData = Depends(get_current_user_authorizer()),
+    
 ):
     results = writing_service.generate_problems(request, supabase)
     return results

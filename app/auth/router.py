@@ -15,5 +15,5 @@ router = APIRouter(
 )
 async def login(form_data: OAuth2PasswordRequestForm = Depends()):
     res = await auth_service.authenticate(form_data)
-
+    
     return ResponseSchema[AuthLoginData]().ok().body(res)

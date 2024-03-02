@@ -15,5 +15,5 @@ class User(models.Model):
     # display_name = fields.TextField(null=True)
     email = fields.TextField(null=True)
     # phone = fields.TextField(null=True)
-    created_at = fields.DatetimeField(auto_now_add=True)
+    # created_at = fields.DatetimeField(auto_now_add=True)
     # updated_at = fields.DatetimeField(auto_now=True)

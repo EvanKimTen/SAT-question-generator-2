@@ -8,17 +8,23 @@ from app.writing.schemas import (
     GeneratedQuestion,
 )
 
+from app.auth.util import create_access_token, create_refresh_token
+from app.auth.service import authenticate, OAuth2PasswordRequestForm
+
 from app.writing.utils import generate_sat_question
 from app.users.schema import UserData
+from app.users.model import User
 from datetime import datetime, timedelta
 from typing import List
 import random
 import json
 
+
+
 def generate_problems(
     data: GenerateSimilarQuestionRequest,
     supabase: Client,
-    # current_user: UserData
+    # current_user: UserData,
 ) -> List[CompleteGeneratedQuestion]:
 # process parameter to send back in the form of CompleteGeneratedQuestion.
     question_count = data.question_count
@@ -29,8 +35,14 @@ def generate_problems(
         complete_generated_question = generate_sat_question(
             category=data.category,
             example_question=random.choice(category_questions),
-        )
-        # print(current_user.username)       
+        )      
+        
+        user = User.get(username=OAuth2PasswordRequestForm.username)
+        access_token = create_access_token(user.id)
+        refresh_token = create_refresh_token(user.id)
+        res = supabase.auth.set_session(access_token, refresh_token)
+        data = supabase.auth.get_user()
+
         complete_generated_question_dict = complete_generated_question.dict()    
         data = supabase.table("exp_insertion_problem_gen").insert(complete_generated_question_dict).execute()
         generated_questions.append(complete_generated_question_dict)

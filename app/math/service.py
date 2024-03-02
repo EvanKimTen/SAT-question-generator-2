@@ -66,9 +66,6 @@ def generate_problems(
         complete_generated_question_dict = complete_generated_question.dict()
         passage_dict = {'passage': None}
         complete_generated_question_dict = passage_dict | complete_generated_question_dict
-        # Serialize the dictionary to a JSON string
-        # complete_generated_question_json = json.dumps(complete_generated_question_dict)
-        # print(complete_generated_question_json)
         data = supabase.table("exp_insertion_problem_gen").insert(complete_generated_question_dict).execute()
         
         generated_questions.append(complete_generated_question)

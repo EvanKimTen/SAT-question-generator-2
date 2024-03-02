@@ -14,7 +14,7 @@ supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 ) 
 async def test_generation(
     supabase = Client,
-    current_user: UserData = Depends(get_current_user_authorizer())
+    # current_user: UserData = Depends(get_current_user_authorizer())
 ):
-    results = test_service.generate_test(supabase, current_user)
+    results = test_service.generate_test(supabase)
     return results
