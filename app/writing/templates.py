@@ -10,6 +10,11 @@ from app.writing.prompts import (
     transitions,
     verb_forms,
     verb_tense,
+    punctuations,
+    sentence_fragment,
+    essential_nonessential,
+    pronoun,
+    supplements,
 )
 
 PROMPTS = {
@@ -21,6 +26,11 @@ PROMPTS = {
     Category.TRANSITIONS: transitions.generate_prompt,
     Category.VERB_FORMS: verb_forms.generate_prompt,
     Category.VERB_TENSE: verb_tense.generate_prompt,
+    Category.PUNCTUATIONS: punctuations.generate_prompt,
+    Category.SENTENCE_FRAGMENT: sentence_fragment.generate_prompt,
+    Category.ESSENTIAL_NONESSENTIAL: essential_nonessential.generate_prompt,
+    Category.PRONOUN: pronoun.generate_prompt,
+    Category.SUPPLEMENTS: supplements.generate_prompt,
 }
 
 

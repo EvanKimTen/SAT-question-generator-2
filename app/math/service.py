@@ -32,11 +32,11 @@ def generate_problems(
     question_count = data.question_count
     question_type = data.question_type
     list_major_categories = []
-    if data.first_level_1 is not None:
+    if data.first_level_2 is not None:
         list_major_categories.append([data.first_level_1, data.first_level_2])
-    if data.second_level_1 is not None:
+    if data.second_level_2 is not None:
         list_major_categories.append([data.second_level_1, data.second_level_2])
-    if data.third_level_1 is not None:
+    if data.third_level_2 is not None:
         list_major_categories.append([data.third_level_1, data.third_level_2])
     print(list_major_categories)
     for _ in range(question_count):

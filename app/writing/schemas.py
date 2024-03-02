@@ -5,18 +5,19 @@ from typing import Optional, List
 
 
 class Category(str, Enum):
-    PUNCTUATIONS = "Punctuations"
-    SENTENCE_FRAGMENT = "Sentence vs Fragment"
+    PUNCTUATIONS = "Punctuations" #
+    SENTENCE_FRAGMENT = "Sentence vs Fragment" #
     ESSENTIAL_NONESSENTIAL = "Essential vs Non-Essential"
-    APOSTROPHE = "Apostrophe"
-    PRONOUN = "Pronoun-Antecedent Agreement"
-    SUBJECT_VERB_AGREEMENT = "Subject-Verb Agreement"
-    VERB_TENSE = "Verb Forms - Tense"
-    VERB_FORMS = "Verb forms - Finite vs. Non-finite"
-    PARALLEL_STRUCTURE = "Parallel Structure"
-    SUBJECT_MODIFIER = "Subject-Modifier Placement"
-    TRANSITIONS = "Transitions" 
-    ACCOMPLISHING_THE_GOAL = "Accomplishing the Goal" 
+    APOSTROPHE = "Apostrophe" #
+    PRONOUN = "Pronoun-Antecedent Agreement" #
+    SUBJECT_VERB_AGREEMENT = "Subject-Verb Agreement" #
+    VERB_TENSE = "Verb Forms - Tense" #
+    VERB_FORMS = "Verb forms - Finite vs. Non-finite" #
+    PARALLEL_STRUCTURE = "Parallel Structure" #
+    SUBJECT_MODIFIER = "Subject-Modifier Placement" #
+    TRANSITIONS = "Transitions"  #
+    SUPPLEMENTS = "Supplements"  #
+    ACCOMPLISHING_THE_GOAL = "Accomplishing the Goal" # 
 
 class CategoryLv2(str, Enum):
     PUNCTUATIONS = "Punctuations"
