@@ -23,6 +23,7 @@ def generate_problems(
 # process parameter to send back in the form of CompleteGeneratedQuestion.
     question_count = data.question_count
     generated_questions = []
+
     category_questions = fetchSelectedQuestions(data.category, supabase)
     for _ in range(question_count):
         complete_generated_question = generate_sat_question(

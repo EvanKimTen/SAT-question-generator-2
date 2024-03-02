@@ -265,20 +265,17 @@ class ModelVersion(Enum):
     V2 = "v2"
     V3 = "v3"
 
-# class LevelsOfCategories(BaseModel):
-#     level1: MajorCategory
-#     level2: subcategory_data[level1]
-    # level3:
 
 class GenerateSimilarQuestionRequest(BaseModel):
     first_level_1: MajorCategory = Field()
-    first_level_2: str = Field() 
-
+    first_level_2: Optional[str] = Field() # gonna be changed to some subcategory-related type later.
+    first_level_3: Optional[str] = Field()
     second_level_1: Optional[MajorCategory] = Field()
     second_level_2: Optional[str] = Field()  
-
+    second_level_3: Optional[str] = Field()  
     third_level_1: Optional[MajorCategory] = Field()
     third_level_2: Optional[str] = Field()
+    third_level_3: Optional[str] = Field()
     question_type: QuestionType
     question_count: conint(ge=1, le=5) = Field(example=1)
 
@@ -305,9 +302,10 @@ class SolutionWithChoices(BaseModel):
     solution: Optional[str]
 
 
-class CompleteGeneratedQuestion(BaseModel):
+class CompleteGeneratedQuestion(BaseModel):    
     question: str
-    type: QuestionType
+    # type: QuestionType
+    explanation: Optional[str]
     choice_a: Optional[str]
     choice_b: Optional[str]
     choice_c: Optional[str]

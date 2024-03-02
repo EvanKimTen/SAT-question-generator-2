@@ -1,9 +1,7 @@
 math_generate_prompt = """
     Your task is to generate one similar sat math question given format, catgory, question_type, and category-related example question.
     
-    first major catgory: {first_level_1}
-    second major category: {second_level_1}
-    third major category: {third_level_1}
+    major catgory: {major_category}
     question_type: {question_type}
     example question: {example_question}
     output format:{format_instructions}
