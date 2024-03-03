@@ -31,7 +31,7 @@ app.add_middleware(
 app.include_router(math_router.router)
 app.include_router(writing_router.router)
 app.include_router(reading_router.router)
-app.include_router(test_router.router)
+# app.include_router(test_router.router)
 
 
 if __name__ == "__main__":
