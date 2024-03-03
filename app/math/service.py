@@ -1,5 +1,5 @@
 from supabase import Client
-from fastapi import HTTPException
+from fastapi import HTTPException, Header
 from app.math.utils import (
     generate_sat_question,
     solve_question,
@@ -26,8 +26,13 @@ import json
 
 def generate_problems(
     data: GenerateSimilarQuestionRequest,
-    supabase: Client
+    supabase: Client,
+    access_token: str,
+    refresh_token: str,
 ) -> List[CompleteGeneratedQuestion]:
+    supabase.auth.set_session(access_token, refresh_token)
+    user_id = supabase.auth.get_user().user.id
+
     generated_questions = []
     question_count = data.question_count
     question_type = data.question_type
@@ -38,7 +43,7 @@ def generate_problems(
         list_major_categories.append([data.second_level_1, data.second_level_2])
     if data.third_level_2 is not None:
         list_major_categories.append([data.third_level_1, data.third_level_2])
-    print(list_major_categories)
+
     for _ in range(question_count):
         major_category = random.choice(list_major_categories)
         lv1_major_category = major_category[0]
@@ -66,6 +71,7 @@ def generate_problems(
         complete_generated_question_dict = complete_generated_question.dict()
         passage_dict = {'passage': None}
         complete_generated_question_dict = passage_dict | complete_generated_question_dict
+        complete_generated_question_dict['user_id'] = user_id
         data = supabase.table("exp_insertion_problem_gen").insert(complete_generated_question_dict).execute()
         
         generated_questions.append(complete_generated_question)
@@ -74,12 +80,17 @@ def generate_problems(
 
 def generate_problem_set(    
     data: GenerateProblemSetRequest,
-    supabase: Client
+    supabase: Client,
+    access_token: str,
+    refresh_token: str,
 ) -> CompleteProblemSet:
     problem_count = data.question_count
     category = data.category
 
-    problem_category_id_list = ProblemIdOfGivenCategories(category, supabase)
+    supabase.auth.set_session(access_token, refresh_token)
+    user_id = supabase.auth.get_user().user.id
+
+    problem_category_id_list = ProblemIdOfGivenCategories(category, None, supabase)
 
     problems_ids = supabase.table("problems").select("id, question, explanation").execute()
     problems_ids_data = problems_ids.data
@@ -109,6 +120,7 @@ def generate_problem_set(
     )
     complete_problem_set_dict = complete_problem_set.dict()
     print(complete_problem_set_dict)
+    complete_problem_set_dict['user_id'] = user_id
     data = supabase.table("exp_insertion_problem_set").insert(complete_problem_set_dict).execute()
     return complete_problem_set
 
@@ -163,10 +175,10 @@ def ProblemIdOfGivenCategories(categorylv1, categorylv2, supabase):
 
 def solve_sympy(question: str) -> SympySolvedQuestion:
     sympy_translation = translate_to_sympy(question)
-    output = executeression(sympy_translation.sympyression)
-    sympy_solved_question = makelanation_by_sympyression(
+    output = execute_expression(sympy_translation.sympyression)
+    sympy_solved_question = make_explanation_by_sympy_expression(
         question=question,
-        sympyression=sympy_translation.sympyression,
+        sympy_expression=sympy_translation.sympy_expression,
         output=output,
     )
     return sympy_solved_question

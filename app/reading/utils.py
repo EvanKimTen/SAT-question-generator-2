@@ -69,7 +69,9 @@ def generate_sat_question_old(
 def generate_sat_question(
     category: Category,
     example_question: str,
+    user_id: str,
     selection_passage_example: str = None,
+
 ) -> CompleteGeneratedQuestion:
     """
     Two Step Generation:
@@ -110,7 +112,8 @@ def generate_sat_question(
     res_dict = res.dict()
 
     res_dict['passage'] = selected_passage
-    print(res_dict)
+    res_dict['user_id'] = user_id
+
     data = supabase.table("exp_insertion_problem_gen").insert(res_dict).execute() # using this table for experiment and be adjusted for the correct one    
     complete_generated_question = CompleteGeneratedQuestion.parse_obj(res_dict)
 

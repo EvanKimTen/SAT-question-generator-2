@@ -1,10 +1,8 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Header
 from app.test_gen import service as test_service
 from app.test_gen.schema import CompleteTestSet
-from app.auth.service import get_current_user_authorizer
 from supabase import Client, create_client
 from app.constants import SUPABASE_URL, SUPABASE_KEY
-from app.users.schema import CurrentUserData, UserCreateInput, UserData
 
 router = APIRouter(prefix="/test", tags=["Test"])
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
@@ -14,7 +12,8 @@ supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 ) 
 async def test_generation(
     supabase = Client,
-    # current_user: UserData = Depends(get_current_user_authorizer())
+    access_token: str = Header(None),
+    refresh_token: str = Header(None),
 ):
-    results = test_service.generate_test(supabase)
+    results = test_service.generate_test(supabase, access_token, refresh_token)
     return results

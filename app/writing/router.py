@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Header
 from supabase import create_client, Client
 from app.writing.schemas import (
     GenerateSimilarQuestionRequest,
@@ -10,20 +10,23 @@ from typing import List
 
 from app.constants import SUPABASE_URL, SUPABASE_KEY
 from app.writing import service as writing_service
-from app.auth.service import get_current_user_authorizer
-from app.users.schema import CurrentUserData, UserCreateInput, UserData
 
 router = APIRouter(prefix="/writing", tags=["Writing"])
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+
+# Just for getting 'access_token' and 'refresh_token' for testing.
+# data = supabase.auth.sign_in_with_password({"email": "junhabin@gmail.com", "password": "jih4412*"})
+# print(supabase.auth.get_session())
 
 @router.post(
     "/problem_generation", response_model=List[CompleteGeneratedQuestion]
 ) 
 async def generate_similar_problem(
     request: GenerateSimilarQuestionRequest,
-    
+    access_token: str = Header(None),
+    refresh_token: str = Header(None)
 ):
-    results = writing_service.generate_problems(request, supabase)
+    results = writing_service.generate_problems(request, supabase, access_token, refresh_token)
     return results
 
 
@@ -32,6 +35,8 @@ async def generate_similar_problem(
 ) 
 async def problem_set_generation(
     request: GenerateProblemSetRequest,
+    access_token: str = Header(None),
+    refresh_token: str = Header(None)
 ):
-    result = writing_service.generate_problem_set(request, supabase)
+    result = writing_service.generate_problem_set(request, supabase, access_token, refresh_token)
     return result

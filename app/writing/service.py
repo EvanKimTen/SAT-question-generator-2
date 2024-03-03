@@ -8,12 +8,8 @@ from app.writing.schemas import (
     GeneratedQuestion,
 )
 
-from app.auth.util import create_access_token, create_refresh_token
-from app.auth.service import authenticate, OAuth2PasswordRequestForm
-
 from app.writing.utils import generate_sat_question
-from app.users.schema import UserData
-from app.users.model import User
+
 from datetime import datetime, timedelta
 from typing import List
 import random
@@ -24,26 +20,23 @@ import json
 def generate_problems(
     data: GenerateSimilarQuestionRequest,
     supabase: Client,
-    # current_user: UserData,
+    access_token: str,
+    refresh_token: str,
 ) -> List[CompleteGeneratedQuestion]:
-# process parameter to send back in the form of CompleteGeneratedQuestion.
+    # process parameter to send back in the form of CompleteGeneratedQuestion.
     question_count = data.question_count
     generated_questions = []
-
+    supabase.auth.set_session(access_token, refresh_token)
+    user_id = supabase.auth.get_user().user.id
     category_questions = fetchSelectedQuestions(data.category, supabase)
     for _ in range(question_count):
         complete_generated_question = generate_sat_question(
             category=data.category,
             example_question=random.choice(category_questions),
         )      
-        
-        user = User.get(username=OAuth2PasswordRequestForm.username)
-        access_token = create_access_token(user.id)
-        refresh_token = create_refresh_token(user.id)
-        res = supabase.auth.set_session(access_token, refresh_token)
-        data = supabase.auth.get_user()
-
-        complete_generated_question_dict = complete_generated_question.dict()    
+       
+        complete_generated_question_dict = complete_generated_question.dict()
+        complete_generated_question_dict['user_id'] = user_id
         data = supabase.table("exp_insertion_problem_gen").insert(complete_generated_question_dict).execute()
         generated_questions.append(complete_generated_question_dict)
 
@@ -51,8 +44,14 @@ def generate_problems(
 
 def generate_problem_set(
     data: GenerateProblemSetRequest,
-    supabase: Client
+    supabase: Client,
+    access_token: str,
+    refresh_token: str,
 ) -> CompleteProblemSet:
+    
+    supabase.auth.set_session(access_token, refresh_token)
+    user_id = supabase.auth.get_user().user.id
+
     problem_count = data.question_count # 54
     category = data.category
     problem_category_id_list = ProblemIdOfGivenCategories(category, supabase)
@@ -84,6 +83,7 @@ def generate_problem_set(
         set=list_prob_set 
     )
     complete_problem_set_dict = complete_problem_set.dict()
+    complete_problem_set_dict['user_id'] = user_id
     data = supabase.table("exp_insertion_problem_set").insert(complete_problem_set_dict).execute()
     return complete_problem_set
 

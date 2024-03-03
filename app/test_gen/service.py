@@ -4,17 +4,22 @@ from app.test_gen.schema import (
 )
 from app.writing.service import ProblemIdOfGivenCategories, fetchSelectedQuestions
 from app.test_gen.distribution_preset import math_category_distribution, english_category_distribution
-from app.users.schema import CurrentUserData, UserCreateInput, UserData
 import random
 
 def generate_test(
     supabase: Client,
+    access_token: str,
+    refresh_token: str,
     # current_user: UserData
 ) -> CompleteTestSet:
     """
     1. Once getting the sum of the ratios in the preset,
     2. In a ratio to each category, you get multiple problems over iteration of math_category_distribution.
     """
+    
+    supabase.auth.set_session(access_token, refresh_token)
+    user_id = supabase.auth.get_user().user.id
+
     test_set = []
     math_total_questions = 58
     eng_total_questions = 96
@@ -60,9 +65,11 @@ def generate_test(
         test_set = test_set + addtional_list
     elif len(test_set) > eng_total_questions:
         test_set = test_set[:153]
+
+    #TODO: insert the test_set into the database.
     
-        # test_set["user_id"] = current_user.id
-        # CompleteTestSet.parse_obj(test_set)
+    # test_set["user_id"] = current_user.id
+    # CompleteTestSet.parse_obj(test_set)
     return None
 
 def ProblemIdOfGivenCategories(subject, category, supabase):

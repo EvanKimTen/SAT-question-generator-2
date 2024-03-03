@@ -17,26 +17,39 @@ import json
 
 def generate_problems(
     data: GenerateSimilarQuestionRequest,
-    supabase: Client
+    supabase: Client,
+    access_token: str,
+    refresh_token: str,
 ) -> List[CompleteGeneratedQuestion]:
+    supabase.auth.set_session(access_token, refresh_token)
+    user_id = supabase.auth.get_user().user.id
+
     question_count = data.question_count
     generated_questions = []
     category_questions = fetchSelectedQuestions(data.category, supabase)
-
+    
     for _ in range(question_count):
         generated_question = generate_sat_question(
             category=data.category,
             example_question=category_questions,
+            user_id=user_id
             # got an error here for empty seq --> need to generate more.
         )
+
         generated_questions.append(generated_question)
 
     return generated_questions
 
 def generate_problem_set(
     data: GenerateProblemSetRequest,
-    supabase: Client
+    supabase: Client,
+    access_token: str,
+    refresh_token: str,
 ) -> CompleteProblemSet:
+    
+    supabase.auth.set_session(access_token, refresh_token)
+    user_id = supabase.auth.get_user().user.id
+    
     problem_count = data.question_count
     category = data.category
     problem_category_id_list = ProblemsIdOfGivenCategories(category, supabase)
@@ -70,6 +83,7 @@ def generate_problem_set(
         set=list_prob_set 
     )
     complete_problem_set_dict = complete_problem_set.dict()
+    complete_problem_set_dict['user_id'] = user_id
     data = supabase.table("exp_insertion_problem_set").insert(complete_problem_set_dict).execute()
     return complete_problem_set
 
@@ -110,14 +124,3 @@ def ProblemsIdOfGivenCategories(category, supabase):
                 problem_category_id_list.append(category_id['problem_id'])
 
     return problem_category_id_list
-
-# def get_category_list():
-#     return list(Category)
-
-
-# def get_question_type_list():
-#     return list(QuestionType)
-
-
-# def get_model_version_list():
-#     return list(ModelVersion)
