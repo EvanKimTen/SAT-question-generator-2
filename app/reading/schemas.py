@@ -24,7 +24,6 @@ class ModelVersion(Enum):
 class GenerateSimilarQuestionRequest(BaseModel):
     category: Category
     question_count: conint(ge=1, le=5) = Field(example=1)
-    # example_question: str
 class GenerateProblemSetRequest(BaseModel):
     category: Category
     question_count: conint(ge=1, le=5) = Field(example=1)
@@ -69,7 +68,7 @@ class CompleteGeneratedQuestion(BaseModel):
 class CompleteProblemSet(BaseModel):
     name: str = Field(default="New Problem Set")
     is_full_test: bool
-    # user_id: int
+    # user_id: UUD
     set: List[QuestionInsideSet]
 
     

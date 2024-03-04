@@ -79,11 +79,10 @@ def generate_problem_set(
     complete_problem_set = CompleteProblemSet(
         name="New Problem Set",
         is_full_test=False,
-        # user_id=12,
+        user_id=user_id,
         set=list_prob_set 
     )
     complete_problem_set_dict = complete_problem_set.dict()
-    complete_problem_set_dict['user_id'] = user_id
     data = supabase.table("exp_insertion_problem_set").insert(complete_problem_set_dict).execute()
     return complete_problem_set
 

@@ -12,6 +12,7 @@ tags_metadata = [
     {"name": "Math", "description": "math"},
     {"name": "Reading", "description": "reading"},
     {"name": "Writing", "description": "writing"},
+    {"name": "Test", "description": "test_gen"},
 ]
 
 
@@ -31,7 +32,7 @@ app.add_middleware(
 app.include_router(math_router.router)
 app.include_router(writing_router.router)
 app.include_router(reading_router.router)
-# app.include_router(test_router.router)
+app.include_router(test_router.router)
 
 
 if __name__ == "__main__":
