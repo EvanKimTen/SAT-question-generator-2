@@ -4,7 +4,7 @@ from app.math.utils import (
     solve_question,
     fetch_problems_by_category_ids,
     get_problem_ids_by_category_ids,
-    generate_category_string
+    generate_category_string,
 )
 from app.math.schemas import (
     GenerateSimilarQuestionRequest,
@@ -31,12 +31,14 @@ async def generate_problems(
     question_type = data.question_type
 
     for _ in range(question_count):
-        category_questions = await fetch_problems_by_category_ids(data.category_ids, supabase)
+        category_questions = await fetch_problems_by_category_ids(
+            data.category_ids, supabase
+        )
         if not category_questions:
             example_question = "No example question found"
         else:
             example_question = random.choice(category_questions)
-        
+
         categories_string = await generate_category_string(data.category_ids, supabase)
         generated_question = generate_sat_question(
             categories=categories_string,
@@ -57,18 +59,28 @@ async def generate_problems(
 
         # Convert the Pydantic model to a dictionary
         complete_generated_question_dict = complete_generated_question.dict()
-        passage_dict = {'passage': None}
-        complete_generated_question_dict = passage_dict | complete_generated_question_dict
-        complete_generated_question_dict['user_id'] = user_id
-        generated_problem = supabase.table("problems").insert(complete_generated_question_dict).execute()
-        generated_problem_id = generated_problem.data[0]['id']
-        supabase.table("problem_problem_categories").insert({"problem_id": generated_problem_id, "category_id": data.category_id}).execute()
+        passage_dict = {"passage": None}
+        complete_generated_question_dict = (
+            passage_dict | complete_generated_question_dict
+        )
+        complete_generated_question_dict["user_id"] = user_id
+        generated_problem = (
+            supabase.table("problems")
+            .insert(complete_generated_question_dict)
+            .execute()
+        )
+        generated_problem_id = generated_problem.data[0]["id"]
+        for category_id in data.category_ids:
+            supabase.table("problem_problem_categories").insert(
+                {"problem_id": generated_problem_id, "category_id": category_id}
+            ).execute()
 
         generated_questions.append(complete_generated_question)
 
-    return generated_questions # return type: list of an instance of completeGeneratedQuestions.
+    return generated_questions  # return type: list of an instance of completeGeneratedQuestions.
 
-async def generate_problem_set(    
+
+async def generate_problem_set(
     data: GenerateProblemSetRequest,
     supabase: Client,
     access_token: str,
@@ -79,9 +91,13 @@ async def generate_problem_set(
     supabase.auth.set_session(access_token, refresh_token)
     user_id = supabase.auth.get_user().user.id
 
-    problem_category_id_list = await get_problem_ids_by_category_ids(category_ids, supabase)
+    problem_category_id_list = await get_problem_ids_by_category_ids(
+        category_ids, supabase
+    )
 
-    problems_ids = supabase.table("problems").select("id, question, explanation").execute()
+    problems_ids = (
+        supabase.table("problems").select("id, question, explanation").execute()
+    )
     problems_ids_data = problems_ids.data
     problem_set = []
     problem_count = 2
@@ -94,17 +110,19 @@ async def generate_problem_set(
                 if problems_id not in problem_set:
                     problem_set.append(problems_id)
                     count += 1
-    
+
     list_prob_set = []
     for problem in problem_set:
-        complete_generated_question = GeneratedQuestion.parse_obj(
-            problem
-        )
+        complete_generated_question = GeneratedQuestion.parse_obj(problem)
         list_prob_set.append(complete_generated_question)
-        
-    generated_test = supabase.table("tests").insert({"name": "New Problem Set", "is_full_test": False, "user_id": user_id}).execute()
-    generated_test_id = generated_test.data[0]['id']
-    
+
+    generated_test = (
+        supabase.table("tests")
+        .insert({"name": "New Problem Set", "is_full_test": False, "user_id": user_id})
+        .execute()
+    )
+    generated_test_id = generated_test.data[0]["id"]
+
     # making complete problem set.
     complete_problem_set = CompleteProblemSet(
         id=generated_test_id,
@@ -114,7 +132,9 @@ async def generate_problem_set(
 
     insert_data = []
     for problem in list_prob_set:
-        insert_data.append({"test_id": generated_test_id, "problem_id": problem.id, "subject": "MATH"})
+        insert_data.append(
+            {"test_id": generated_test_id, "problem_id": problem.id, "subject": "MATH"}
+        )
 
     supabase.table("test_problems").insert(insert_data).execute()
     return complete_problem_set

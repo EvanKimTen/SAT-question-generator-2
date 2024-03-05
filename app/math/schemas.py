@@ -1,7 +1,7 @@
 from pydantic import BaseModel, conint, Field
 from enum import Enum
 from typing import Optional, List
-from uuid import UUID
+from app.core.schema import QuestionType
 
 
 class Category(str, Enum):
@@ -12,15 +12,15 @@ class Category(str, Enum):
 
 
 class MajorCategory(str, Enum):
-    LINEAR_EQUATIONS = "Linear Equations" 
-    LINEAR_FUNCTION = "Linear Function" 
-    SYSTEM_OF_EQUATIONS = "System of Equations" 
-    ABSOLUTE_VALUE = "Absolute Value" 
-    SOLVING_INEQUALITIES = "Solving Inequalities" 
-    GRAPHING_INEQUALITIES = "Graphing Inequalities" 
+    LINEAR_EQUATIONS = "Linear Equations"
+    LINEAR_FUNCTION = "Linear Function"
+    SYSTEM_OF_EQUATIONS = "System of Equations"
+    ABSOLUTE_VALUE = "Absolute Value"
+    SOLVING_INEQUALITIES = "Solving Inequalities"
+    GRAPHING_INEQUALITIES = "Graphing Inequalities"
     EXPONENTIAL_EQUATIONS = "Exponential Equations"
     EXPONENTIAL_FUNCTION = "Exponential Function"
-    RADICAL_EQUATION_AND_FUNCTION = "Radical Equation and Function" 
+    RADICAL_EQUATION_AND_FUNCTION = "Radical Equation and Function"
     COMPLEX_NUMBERS = "Complex Numbers"
     QUADRATIC_EQUATION = "Quadratic Equation"
     QUADRATIC_FUNCTION = "Quadratic Function"
@@ -28,12 +28,12 @@ class MajorCategory(str, Enum):
     POLYNOMIAL_FUNCTION = "Polynomial Function"
     RATIONAL_EQUATION = "Rational Equation"
     RATIONAL_FUNCTION = "Rational Function"
-    FUNCTIONS = "Functions" 
-    TRANSFORMATION = "Transformation" 
-    RATIO_RATE_PROPORTION = "Ratio, Rate, and Proportion" 
+    FUNCTIONS = "Functions"
+    TRANSFORMATION = "Transformation"
+    RATIO_RATE_PROPORTION = "Ratio, Rate, and Proportion"
     PERCENTAGE = "Percentage"
     PROBABILITY = "Probability"
-    STATISTICS = "Statistics" 
+    STATISTICS = "Statistics"
     ANGLES_TRIANGLES_POLYGONS = "Angles, Triangles, and Polygons"
     CIRCLE = "Circle"
     CONGRUENCE_SIMILARITY_TRIANGLES = "Congruence and Similarity of Triangles"
@@ -255,21 +255,11 @@ subcategory_data = {
 }
 
 
-class QuestionType(str, Enum):
-    MULTIPLE_CHOICE = "Multiple Choice"
-    SHORT_ANSWER = "Short Answer"
-
-
-class ModelVersion(Enum):
-    V1 = "v1"
-    V2 = "v2"
-    V3 = "v3"
-
-
 class GenerateSimilarQuestionRequest(BaseModel):
     category_ids: List[str] = Field(..., max_items=3)
     question_type: QuestionType
     question_count: conint(ge=1, le=5) = Field(example=1)
+
 
 class GenerateProblemSetRequest(BaseModel):
     category_ids: List[str] = Field(..., max_items=3)
@@ -291,21 +281,21 @@ class SolutionWithChoices(BaseModel):
     solution: Optional[str]
 
 
-class CompleteGeneratedQuestion(BaseModel):    
+class CompleteGeneratedQuestion(BaseModel):
     question: str
-    # type: QuestionType
     explanation: Optional[str]
     choice_a: Optional[str]
     choice_b: Optional[str]
     choice_c: Optional[str]
     choice_d: Optional[str]
     correct_choice: Optional[str]
-    solution: Optional[str]
-    
+
+
 class CompleteProblemSet(BaseModel):
     id: int
     name: str = Field(default="New Problem Set")
     is_full_test: bool
+
 
 class SolveQuestionSympyRequest(BaseModel):
     question: str

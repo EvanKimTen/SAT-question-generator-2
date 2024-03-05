@@ -7,4 +7,3 @@ from app.writing.schemas import (
 complete_generated_question_parser = PydanticOutputParser(
     pydantic_object=CompleteGeneratedQuestion
 )
-
