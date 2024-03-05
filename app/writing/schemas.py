@@ -43,17 +43,13 @@ class ModelVersion(Enum):
     V3 = "v3"
 
 class GenerateSimilarQuestionRequest(BaseModel):
-    category: Category
+    category_id: str
     question_count: conint(ge=1, le=5) = Field(example=1)
     
 class GenerateProblemSetRequest(BaseModel):
-    category: Category
+    category_id: str
     question_count: conint(ge=1, le=5) = Field(example=1)
 
-
-class GenerateTestSetRequest(BaseModel):
-    category: Category
-    question_count: conint(ge=1, le=5) = Field(example=1)
 
 class Module(str, Enum):
     INITIAL = "1"
@@ -84,13 +80,12 @@ class CompleteGeneratedQuestion(BaseModel):
     choice_c: str
     choice_d: str
     correct_choice: str
-    solution: str
+    explanation: str
 
 class CompleteProblemSet(BaseModel):
+    id: int
     name: str = Field(default="New Problem Set")
     is_full_test: bool
-    # user_id: int
-    set: List[GeneratedQuestion]
 
 # class CompleteTestSet(BaseModel):
 #     name: str = Field(default="New Test")

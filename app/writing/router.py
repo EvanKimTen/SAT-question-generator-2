@@ -15,8 +15,8 @@ router = APIRouter(prefix="/writing", tags=["Writing"])
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 # Just for getting 'access_token' and 'refresh_token' for testing.
-# data = supabase.auth.sign_in_with_password({"email": "junhabin@gmail.com", "password": "jih4412*"})
-# print(supabase.auth.get_session())
+data = supabase.auth.sign_in_with_password({"email": "junhabin@gmail.com", "password": "jih4412*"})
+print(supabase.auth.get_session())
 
 @router.post(
     "/problem_generation", response_model=List[CompleteGeneratedQuestion]
@@ -26,7 +26,7 @@ async def generate_similar_problem(
     access_token: str = Header(None),
     refresh_token: str = Header(None)
 ):
-    results = writing_service.generate_problems(request, supabase, access_token, refresh_token)
+    results = await writing_service.generate_problems(request, supabase, access_token, refresh_token)
     return results
 
 
@@ -38,5 +38,5 @@ async def problem_set_generation(
     access_token: str = Header(None),
     refresh_token: str = Header(None)
 ):
-    result = writing_service.generate_problem_set(request, supabase, access_token, refresh_token)
+    result = await writing_service.generate_problem_set(request, supabase, access_token, refresh_token)
     return result
