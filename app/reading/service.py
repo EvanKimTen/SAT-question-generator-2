@@ -78,6 +78,10 @@ async def generate_problem_set(
         complete_generated_question = QuestionInsideSet.parse_obj(problem)
         list_prob_set.append(complete_generated_question)
 
+    # if the length of probelm_set is less than problem_count, raise an error.
+    if len(list_prob_set) < problem_count:
+        raise ValueError("Not enough problems to generate a problem set.")
+
     generated_test = (
         supabase.table("tests")
         .insert({"name": "New Problem Set", "is_full_test": False, "user_id": user_id})

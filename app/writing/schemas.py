@@ -33,6 +33,7 @@ class CategoryLv2(str, Enum):
     TRANSITIONS = "Transitions"
     ACCOMPLISHING_THE_GOAL = "Accomplishing the Goal"
 
+
 class QuestionType(str, Enum):
     MULTIPLE_CHOICE = "Multiple Choice"
 

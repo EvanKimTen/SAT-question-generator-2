@@ -100,7 +100,7 @@ async def generate_problem_set(
     )
     problems_ids_data = problems_ids.data
     problem_set = []
-    problem_count = 2
+    problem_count = data.question_count
     count = 0
     for problems_id in problems_ids_data:
         for problem_category_id in problem_category_id_list:
@@ -115,6 +115,10 @@ async def generate_problem_set(
     for problem in problem_set:
         complete_generated_question = GeneratedQuestion.parse_obj(problem)
         list_prob_set.append(complete_generated_question)
+
+    # if the length of probelm_set is less than problem_count, raise an error.
+    if len(list_prob_set) < problem_count:
+        raise ValueError("Not enough problems to generate a problem set.")
 
     generated_test = (
         supabase.table("tests")

@@ -49,7 +49,7 @@ async def get_problem_ids_by_category_ids(category_ids: list, supabase) -> list:
     )
 
     # FIXME: ids will be string, temporarily change category_ids element to int
-    # category_ids = list(map(int, category_ids))
+    category_ids = list(map(int, category_ids))
 
     data = problem_problem_categories.data
     problem_category_dict = {}

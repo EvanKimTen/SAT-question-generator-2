@@ -92,9 +92,17 @@ def generate_sat_question(
     res_dict["passage"] = selected_passage
     res_dict["user_id"] = user_id
 
-    supabase.table("problems").insert(
-        res_dict
-    ).execute()  # using this table for experiment and be adjusted for the correct one
+    generated_problem = (
+        supabase.table("problems").insert(res_dict).execute()
+    )  # using this table for experiment and be adjusted for the correct one
+    generated_problem_id = generated_problem.data[0]["id"]
+    supabase.table("problem_problem_categories").insert(
+        {
+            "problem_id": generated_problem_id,
+            "category_id": "191",
+        }  # FIXME: category_id should be passed from the request.
+    ).execute()
+
     complete_generated_question = CompleteGeneratedQuestion.parse_obj(res_dict)
 
     return complete_generated_question
