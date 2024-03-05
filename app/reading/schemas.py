@@ -2,7 +2,7 @@ from pydantic import BaseModel, conint, Field
 from enum import Enum
 from typing import Optional
 from pydantic import BaseModel
-
+from uuid import UUID
 from typing import List
 class Category(str, Enum):
     FUNCTION_LIT = "Function - Literature"
@@ -15,7 +15,7 @@ class QuestionType(str, Enum):
     MULTIPLE_CHOICE = "Multiple Choice"
 
 
-class ModelVersion(Enum):
+class ModelVersion(str, Enum):
     V1 = "v1"
     V2 = "v2"
     V3 = "v3"
@@ -68,7 +68,7 @@ class CompleteGeneratedQuestion(BaseModel):
 class CompleteProblemSet(BaseModel):
     name: str = Field(default="New Problem Set")
     is_full_test: bool
-    # user_id: UUD
+    user_id: UUID
     set: List[QuestionInsideSet]
 
     
