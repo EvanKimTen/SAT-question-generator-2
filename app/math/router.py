@@ -3,7 +3,6 @@ from supabase import create_client, Client
 from app.math.schemas import (
     GenerateSimilarQuestionRequest,
     GenerateProblemSetRequest,
-    GenerateTestSetRequest,
     CompleteGeneratedQuestion,
     CompleteProblemSet,
 )
@@ -24,7 +23,7 @@ async def generate_similar_problem(
     refresh_token: str = Header(None)
     # current_user = Depends(get_current_user_authorizer()),
 ):
-    result = math_service.generate_problems(request, supabase, access_token, refresh_token)
+    result = await math_service.generate_problems(request, supabase, access_token, refresh_token)
     return result
 
 @router.post(
@@ -36,5 +35,5 @@ async def problem_set_generation(
     refresh_token: str = Header(None)
     # current_user = Depends(get_current_user_authorizer()),
 ):
-    result = math_service.generate_problem_set(request, supabase, access_token, refresh_token)
+    result = await math_service.generate_problem_set(request, supabase, access_token, refresh_token)
     return result

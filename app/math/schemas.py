@@ -267,25 +267,14 @@ class ModelVersion(Enum):
 
 
 class GenerateSimilarQuestionRequest(BaseModel):
-    first_level_1: MajorCategory = Field()
-    first_level_2: Optional[str] = Field() # gonna be changed to some subcategory-related type later.
-    first_level_3: Optional[str] = Field()
-    second_level_1: Optional[MajorCategory] = Field()
-    second_level_2: Optional[str] = Field()  
-    second_level_3: Optional[str] = Field()  
-    third_level_1: Optional[MajorCategory] = Field()
-    third_level_2: Optional[str] = Field()
-    third_level_3: Optional[str] = Field()
+    category_ids: List[str] = Field(..., max_items=3)
     question_type: QuestionType
     question_count: conint(ge=1, le=5) = Field(example=1)
 
 class GenerateProblemSetRequest(BaseModel):
-    category: MajorCategory = Field()
+    category_ids: List[str] = Field(..., max_items=3)
     question_count: conint(ge=1, le=5) = Field(example=1)
 
-class GenerateTestSetRequest(BaseModel):
-    category: Category
-    question_count: conint(ge=1) = Field(example=1)
 
 class GeneratedQuestion(BaseModel):
     id: int
