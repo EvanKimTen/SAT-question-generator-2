@@ -23,9 +23,8 @@ async def generate_similar_problem(
     request: GenerateSimilarQuestionRequest,
     access_token: str = Header(None),
     refresh_token: str = Header(None),
-    # current_user = Depends(get_current_user_authorizer()),
 ):
-    result = reading_service.generate_problems(request, supabase_exp, access_token, refresh_token)
+    result = await reading_service.generate_problems(request, supabase_exp, access_token, refresh_token)
     return result
 
 @router.post(
@@ -36,5 +35,5 @@ async def problem_set_generation(
     access_token: str = Header(None),
     refresh_token: str = Header(None),
 ):
-    result = reading_service.generate_problem_set(request, supabase_exp, access_token, refresh_token)
+    result = await reading_service.generate_problem_set(request, supabase_exp, access_token, refresh_token)
     return result
