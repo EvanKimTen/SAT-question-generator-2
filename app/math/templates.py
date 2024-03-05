@@ -16,7 +16,7 @@ from app.math.parsers import (
 generate_question_template = ChatPromptTemplate(
     messages=[HumanMessagePromptTemplate.from_template(math_generate_prompt)],
     input_variables=[
-        "major_category",
+        "category",
         "example_question",
         "question_type",
     ],

@@ -40,5 +40,7 @@ json_format_fix_prompt = PromptTemplate.from_template(
 
 function_category_preprocess_prompt = PromptTemplate.from_template(
     function_category_preprocess.FUNCTION_CATEGORY_PREPROCESS_PROMPT,
-    partial_variables={"format_instructions": preprocessed_passage_parser.get_format_instructions()},
+    partial_variables={
+        "format_instructions": preprocessed_passage_parser.get_format_instructions()
+    },
 )
