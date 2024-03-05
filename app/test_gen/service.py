@@ -4,7 +4,7 @@ from app.test_gen.schema import (
     CompleteTestProblem, 
     CompleteTestProblemSet
 )
-from app.writing.service import ProblemIdOfGivenCategories, fetchSelectedQuestions
+from app.core.utils import fetch_problems_by_category_ids
 from app.test_gen.distribution_preset import math_category_distribution, english_category_distribution
 import random
 
@@ -31,7 +31,7 @@ def generate_test(
     for category, ratio in math_category_distribution.items():
         ratio = ratio // sum_ratios
         num_questions_to_select = round(math_total_questions * ratio)
-        category_questions = fetchSelectedQuestions(category, supabase)
+        category_questions = fetch_problems_by_category_ids(category, supabase)
         # randomly_selected_questions = test_set.extend(random.sample(category_questions, num_questions_to_select))
         # for randomly_selected_question in randomly_selected_questions:
         #     complete_problems = CompleteTestProblem(
@@ -66,7 +66,7 @@ def generate_test(
     for category, ratio in english_category_distribution.items():
         ratio = (ratio / sum_ratios) * 100
         num_questions_to_select = round(eng_total_questions * ratio)
-        category_questions = fetchSelectedQuestions(category, supabase)
+        category_questions = fetch_problems_by_category_ids(category, supabase)
         # randomly_selected_questions = test_set.extend(random.sample(category_questions, num_questions_to_select))
         # for randomly_selected_question in randomly_selected_questions:
         #     complete_problems = CompleteTestProblem(
@@ -109,37 +109,3 @@ def generate_test(
     complete_test_prob_set_dict = complete_test_prob_set.dict()
     data = supabase.table("exp_test").insert(complete_test_prob_set_dict).execute()
     return complete_test_prob_set
-
-def fetchSelectedQuestions(category, supabase):
-    problem_category_id_list = ProblemIdOfGivenCategories(category, supabase)
-
-    problems_ids = supabase.table("problems").select("id, question").execute()
-    problems_ids_data = problems_ids.data
-    questions = []
-
-    for problem in problems_ids_data:
-        for category_id_l in problem_category_id_list:
-            if problem['id'] == category_id_l:
-                if problem not in questions:
-                    questions.append(problem)
-
-    return questions
-
-def ProblemIdOfGivenCategories(category, supabase):
-    problem_problem_categories_ids = supabase.table("problem_problem_categories").select("problem_id, category_id").execute()
-    problem_categories = None
-    problem_categories = supabase.table("problem_categories").select("id, level1").execute()
-    
-    problem_problem_categories_ids_data = problem_problem_categories_ids.data
-    problem_categories_data = problem_categories.data
-    problem_category_id_list = []
-    category_id_list = []
-    for retrived_category in problem_categories_data:
-        if retrived_category['level1'] == category:
-            category_id_list.append(retrived_category['id'])     
-    for category_id in problem_problem_categories_ids_data:
-        for category_id_l in category_id_list:
-            if category_id['category_id'] == category_id_l:
-                problem_category_id_list.append(category_id['problem_id'])
-    return problem_category_id_list
-
