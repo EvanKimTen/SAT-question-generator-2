@@ -303,11 +303,9 @@ class CompleteGeneratedQuestion(BaseModel):
     solution: Optional[str]
     
 class CompleteProblemSet(BaseModel):
+    id: int
     name: str = Field(default="New Problem Set")
     is_full_test: bool
-    # user_id: int
-    set: List[GeneratedQuestion]
-
 
 class SolveQuestionSympyRequest(BaseModel):
     question: str

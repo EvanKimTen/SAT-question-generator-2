@@ -60,8 +60,10 @@ async def generate_problems(
         passage_dict = {'passage': None}
         complete_generated_question_dict = passage_dict | complete_generated_question_dict
         complete_generated_question_dict['user_id'] = user_id
-        data = supabase.table("exp_insertion_problem_gen").insert(complete_generated_question_dict).execute()
-        
+        generated_problem = supabase.table("problems").insert(complete_generated_question_dict).execute()
+        generated_problem_id = generated_problem.data[0]['id']
+        supabase.table("problem_problem_categories").insert({"problem_id": generated_problem_id, "category_id": data.category_id}).execute()
+
         generated_questions.append(complete_generated_question)
 
     return generated_questions # return type: list of an instance of completeGeneratedQuestions.
@@ -99,12 +101,20 @@ async def generate_problem_set(
             problem
         )
         list_prob_set.append(complete_generated_question)
+        
+    generated_test = supabase.table("tests").insert({"name": "New Problem Set", "is_full_test": False, "user_id": user_id}).execute()
+    generated_test_id = generated_test.data[0]['id']
+    
+    # making complete problem set.
     complete_problem_set = CompleteProblemSet(
+        id=generated_test_id,
         name="New Problem Set",
         is_full_test=False,
-        set=list_prob_set 
     )
-    complete_problem_set_dict = complete_problem_set.dict()
-    complete_problem_set_dict['user_id'] = user_id
-    data = supabase.table("exp_insertion_problem_set").insert(complete_problem_set_dict).execute()
+
+    insert_data = []
+    for problem in list_prob_set:
+        insert_data.append({"test_id": generated_test_id, "problem_id": problem.id, "subject": "MATH"})
+
+    supabase.table("test_problems").insert(insert_data).execute()
     return complete_problem_set
