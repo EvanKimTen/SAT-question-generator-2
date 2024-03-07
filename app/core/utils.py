@@ -1,4 +1,6 @@
-async def generate_category_string(categories: list, supabase) -> list:
+from app.db import supabase
+
+async def generate_category_string(categories: list) -> list:
     category_strings = []
     for category in categories:
         query = (
@@ -9,15 +11,18 @@ async def generate_category_string(categories: list, supabase) -> list:
 
         result = query.execute()
 
+        if len(result.data) == 0:
+            continue
+
         concatenated_string = f"{result.data[0]['level1']} {result.data[0]['level2'] or ''} {result.data[0]['level3'] or ''}"
 
         category_strings.append(concatenated_string)
     return category_strings
 
 
-async def fetch_problems_by_category_ids(category_ids: list, supabase):
+async def fetch_problems_by_category_ids(category_ids: list):
     problem_category_id_list = await get_problem_ids_by_category_ids(
-        category_ids, supabase
+        category_ids
     )
 
     problems_ids = supabase.table("problems").select("id, question").execute()
@@ -33,7 +38,7 @@ async def fetch_problems_by_category_ids(category_ids: list, supabase):
     return questions
 
 
-async def get_problem_ids_by_category_ids(category_ids: list, supabase) -> list:
+async def get_problem_ids_by_category_ids(category_ids: list) -> list:
     """
     To retrieve the corresponding id to the given category,
     1. Retrieve level 1 categories

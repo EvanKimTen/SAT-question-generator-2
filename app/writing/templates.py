@@ -15,7 +15,9 @@ from app.writing.prompts import (
     essential_nonessential,
     pronoun,
     supplements,
+    generic,
 )
+from app.db import supabase
 
 PROMPTS = {
     Category.ACCOMPLISHING_THE_GOAL: accomplishing_the_goal.generate_prompt,
@@ -31,12 +33,19 @@ PROMPTS = {
     Category.ESSENTIAL_NONESSENTIAL: essential_nonessential.generate_prompt,
     Category.PRONOUN: pronoun.generate_prompt,
     Category.SUPPLEMENTS: supplements.generate_prompt,
+    'generic': generic.generate_prompt,
 }
 
 
-def get_template(category):
+def get_template(category_id):
+    category = supabase.from_("problem_categories").select("generate_prompt").eq("id", category_id).execute()
+    generate_prompt = category.data[0]["generate_prompt"]
+
+    if generate_prompt is None:
+        generate_prompt = generic.generate_prompt
+    print('generate_prompt: ', generate_prompt)
     return ChatPromptTemplate(
-        messages=[HumanMessagePromptTemplate.from_template(PROMPTS[category])],
+        messages=[HumanMessagePromptTemplate.from_template(generate_prompt)],
         input_variables=["example_question", "question_type"],
         partial_variables={
             "format_instructions": complete_generated_question_parser.get_format_instructions()

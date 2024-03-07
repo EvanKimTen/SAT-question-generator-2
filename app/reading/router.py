@@ -23,13 +23,13 @@ async def generate_similar_problem(
     access_token: str = Header(None),
     refresh_token: str = Header(None),
 ):
-    try:
-        result = await reading_service.generate_problems(
-            request, supabase_exp, access_token, refresh_token
-        )
-        return result
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+    # try:
+    result = await reading_service.generate_problems(
+        request, supabase_exp, access_token, refresh_token
+    )
+    return result
+    # except Exception as e:
+    #     raise HTTPException(status_code=400, detail=str(e))
 
 
 @router.post("/problem_set_generation", response_model=CompleteProblemSet)

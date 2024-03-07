@@ -1,27 +1,22 @@
 from langchain.prompts import ChatPromptTemplate, HumanMessagePromptTemplate
 from langchain.prompts.prompt import PromptTemplate
 from app.reading.parsers import generated_question_parser, preprocessed_passage_parser
-from app.reading.schemas import Category
 from app.reading.prompts import (
-    function_lit,
-    function_sci_ss,
-    purpose_lit,
-    purpose_sci_ss,
     fix_json_parsing,
     function_category_preprocess,
+    generic,
 )
+from app.db import supabase
 
-PROMPTS = {
-    Category.FUNCTION_LIT: function_lit.generate_prompt,
-    Category.FUNCTION_SCI_SS: function_sci_ss.generate_prompt,
-    Category.PURPOSE_LIT: purpose_lit.generate_prompt,
-    Category.PURPOSE_SCI_SS: purpose_sci_ss.generate_prompt,
-}
+def get_template(category_id):
+    category = supabase.from_("problem_categories").select("generate_prompt").eq("id", category_id).execute()
+    generate_prompt = category.data[0]["generate_prompt"]
 
+    if generate_prompt is None:
+        generate_prompt = generic.generate_prompt
 
-def get_template(category):
     return ChatPromptTemplate(
-        messages=[HumanMessagePromptTemplate.from_template(PROMPTS[category])],
+        messages=[HumanMessagePromptTemplate.from_template(generate_prompt)],
         input_variables=[
             "example_question",
             "question_type",

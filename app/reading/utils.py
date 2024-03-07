@@ -5,6 +5,7 @@ from langchain.schema import (
 from app.reading.templates import get_template, function_category_preprocess_prompt
 from app.reading.parsers import generated_question_parser
 from app.reading.schemas import Category, CompleteGeneratedQuestion
+from app.core.utils import generate_category_string
 
 from app.reading.prompts.fix_json_parsing import JSON_FORMAT_FIX_PROMPT
 from langchain.chat_models import ChatOpenAI
@@ -13,8 +14,6 @@ import re
 from langchain.embeddings import OpenAIEmbeddings
 from app.constants import OPENAI_API_KEY, SUPABASE_URL, SUPABASE_KEY
 
-
-from typing import List
 import random
 from supabase import create_client, Client
 import json
@@ -39,8 +38,8 @@ def inference_with_chatcompletion_model(prompt: str, model_name: str):
     return chat(messages)
 
 
-def generate_sat_question(
-    category: str,
+async def generate_sat_question(
+    category_id: str,
     example_question: str,
     user_id: str,
     selection_passage_example: str = None,
@@ -57,8 +56,10 @@ def generate_sat_question(
     selected_passage = selected_row["passage"]
     source_title = selected_row["source_title"]
 
+    category_string = await generate_category_string([category_id])
+
     # Preprocess the selected passage if the category is FUNCTION_LIT or FUNCTION_SCI_SS (Underline the sentence in the passage.)
-    if category == Category.FUNCTION_LIT or category == Category.FUNCTION_SCI_SS:
+    if category_id == Category.FUNCTION_LIT or category_id == Category.FUNCTION_SCI_SS:
         # using langchain to underline the sentence, use FUNCTION_CATEGORY_PREPROCESS_PROMPT
         _input = function_category_preprocess_prompt.format_prompt(
             passage=selected_passage
@@ -66,11 +67,8 @@ def generate_sat_question(
         output = chat_model(_input.to_messages())
         selected_passage = json.loads(output.content)["preprocessed_passage"]
 
-    # FIXME: temporary fix for the category
-    category = "Purpose - Literature"
-
-    _input = get_template(category).format_prompt(
-        category=category,
+    _input = get_template(category_id).format_prompt(
+        category=category_string,
         example_question=example_question,
         selected_passage=selected_passage,
         source_title=source_title,
@@ -99,8 +97,8 @@ def generate_sat_question(
     supabase.table("problem_problem_categories").insert(
         {
             "problem_id": generated_problem_id,
-            "category_id": "191",
-        }  # FIXME: category_id should be passed from the request.
+            "category_id": category_id,
+        }
     ).execute()
 
     complete_generated_question = CompleteGeneratedQuestion.parse_obj(res_dict)

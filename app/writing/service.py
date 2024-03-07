@@ -1,5 +1,3 @@
-from fastapi import HTTPException
-from supabase import Client
 from app.writing.schemas import (
     GenerateSimilarQuestionRequest,
     GenerateProblemSetRequest,
@@ -14,11 +12,11 @@ from app.core.utils import (
 from app.writing.utils import generate_sat_question
 from typing import List
 import random
+from app.db import supabase
 
 
 async def generate_problems(
     data: GenerateSimilarQuestionRequest,
-    supabase: Client,
     access_token: str,
     refresh_token: str,
 ) -> List[CompleteGeneratedQuestion]:
@@ -28,7 +26,7 @@ async def generate_problems(
     supabase.auth.set_session(access_token, refresh_token)
     user_id = supabase.auth.get_user().user.id
     category_questions = await fetch_problems_by_category_ids(
-        [data.category_id], supabase
+        [data.category_id]
     )
     if not category_questions:
         example_question = "No example question found"
@@ -36,9 +34,10 @@ async def generate_problems(
         example_question = random.choice(category_questions)
 
     for _ in range(question_count):
-        complete_generated_question = generate_sat_question(
-            category="Punctuations",  # FIXME: category should be passed from the request.
+        complete_generated_question = await generate_sat_question(
+            category_id=data.category_id,  # FIXME: category should be passed from the request.
             example_question=example_question,
+            user_id=user_id,
         )
         complete_generated_question_dict = complete_generated_question.dict()
         complete_generated_question_dict["user_id"] = user_id
@@ -47,11 +46,7 @@ async def generate_problems(
             .insert(complete_generated_question_dict)
             .execute()
         )
-        # get the id of the generated question and insert it into the problem_problem_categories table.
-        generated_problem_id = generated_problem.data[0]["id"]
-        supabase.table("problem_problem_categories").insert(
-            {"problem_id": generated_problem_id, "category_id": data.category_id}
-        ).execute()
+
         generated_questions.append(complete_generated_question_dict)
 
     return generated_questions
@@ -59,7 +54,6 @@ async def generate_problems(
 
 async def generate_problem_set(
     data: GenerateProblemSetRequest,
-    supabase: Client,
     access_token: str,
     refresh_token: str,
 ) -> CompleteProblemSet:
@@ -68,7 +62,7 @@ async def generate_problem_set(
 
     problem_count = data.question_count  # 54
     problem_category_id_list = await get_problem_ids_by_category_ids(
-        [data.category_id], supabase
+        [data.category_id]
     )
 
     problems_ids = (

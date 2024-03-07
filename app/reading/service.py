@@ -11,7 +11,6 @@ from app.reading.schemas import (
 from app.core.utils import (
     fetch_problems_by_category_ids,
     get_problem_ids_by_category_ids,
-    generate_category_string,
 )
 from typing import List
 
@@ -28,12 +27,12 @@ async def generate_problems(
     question_count = data.question_count
     generated_questions = []
     category_questions = await fetch_problems_by_category_ids(
-        [data.category_id], supabase
+        [data.category_id]
     )
-    category_string = await generate_category_string([data.category_id], supabase)
+
     for _ in range(question_count):
-        generated_question = generate_sat_question(
-            category=category_string,
+        generated_question = await generate_sat_question(
+            category_id=data.category_id,
             example_question=category_questions,
             user_id=user_id
             # got an error here for empty seq --> need to generate more.
@@ -55,7 +54,7 @@ async def generate_problem_set(
 
     problem_count = data.question_count
     problem_category_id_list = await get_problem_ids_by_category_ids(
-        [data.category_id], supabase
+        [data.category_id]
     )
 
     problems_ids = (
