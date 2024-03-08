@@ -10,8 +10,14 @@ from typing import List
 
 router = APIRouter(prefix="/reading", tags=["Reading"])
 
-from app.constants import SUPABASE_URL, SUPABASE_KEY
 from app.reading import service as reading_service
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 
 
 supabase_exp: Client = create_client(SUPABASE_URL, SUPABASE_KEY)

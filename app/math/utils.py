@@ -20,8 +20,13 @@ from app.math.schemas import (
     SympyTranslation,
     SympySolvedQuestion,
 )
-from app.constants import OPENAI_API_KEY
 from sympy import *
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 # only below two models are supported for json response
 # model_name = "gpt-3.5-turbo-0125"

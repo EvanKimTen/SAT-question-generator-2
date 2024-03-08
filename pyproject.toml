@@ -23,6 +23,7 @@ sympy = "^1.12"
 pinecone-client = "^2.2.2"
 pypdf2 = "^3.0.1"
 supabase = "^2.3.5"
+python-dotenv = "^1.0.1"
 
 [tool.poetry.group.dev.dependencies]
 langchain = "^0.0.191"

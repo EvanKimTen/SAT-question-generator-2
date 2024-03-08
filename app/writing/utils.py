@@ -1,11 +1,16 @@
 from langchain.chat_models import ChatOpenAI
 from langchain.schema import HumanMessage
 from app.writing.templates import get_template
-from app.constants import OPENAI_API_KEY
 from app.core.utils import generate_category_string
 from app.db import supabase
 import json
 from app.writing.schemas import CompleteGeneratedQuestion
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 # only below two models are supported for json response
 # model_name = "gpt-3.5-turbo-0125"

@@ -1,11 +1,15 @@
 from langchain.output_parsers import PydanticOutputParser, OutputFixingParser
 from langchain.chat_models import ChatOpenAI
-from app.constants import OPENAI_API_KEY
-
 from app.reading.schemas import (
     GeneratedQuestion,
     PreprocessedPassage,
 )
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 parser = PydanticOutputParser(pydantic_object=GeneratedQuestion)
 

@@ -1,5 +1,4 @@
 from fastapi import APIRouter, Header, HTTPException
-from supabase import create_client, Client
 from app.writing.schemas import (
     GenerateSimilarQuestionRequest,
     GenerateProblemSetRequest,
@@ -7,8 +6,6 @@ from app.writing.schemas import (
     CompleteProblemSet,
 )
 from typing import List
-
-from app.constants import SUPABASE_URL, SUPABASE_KEY
 from app.writing import service as writing_service
 from app.db import supabase
 

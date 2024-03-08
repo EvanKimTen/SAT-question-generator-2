@@ -12,11 +12,18 @@ from langchain.chat_models import ChatOpenAI
 from langchain.chains import LLMChain
 import re
 from langchain.embeddings import OpenAIEmbeddings
-from app.constants import OPENAI_API_KEY, SUPABASE_URL, SUPABASE_KEY
-
 import random
 from supabase import create_client, Client
 import json
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+
 
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
