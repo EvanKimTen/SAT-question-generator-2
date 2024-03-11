@@ -24,13 +24,13 @@ async def generate_similar_problem(
     access_token: str = Header(None),
     refresh_token: str = Header(None),
 ):
-    # try:
+    try:
         result = await writing_service.generate_problems(
             request, access_token, refresh_token
         )
         return result
-    # except Exception as e:
-    #     raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 
 @router.post("/problem_set_generation", response_model=CompleteProblemSet)

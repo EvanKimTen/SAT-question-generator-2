@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Header
+from fastapi import APIRouter, Header, HTTPException
 from app.test_gen import service as test_service
 from app.test_gen.schema import CompleteTestProblemSet
 
@@ -20,6 +20,8 @@ async def test_generation(
     access_token: str = Header(None),
     refresh_token: str = Header(None),
 ):
-    # results = test_service.generate_test(supabase)
-    results = await test_service.generate_test(supabase, access_token, refresh_token)
-    return results
+    try:
+        results = await test_service.generate_test(supabase, access_token, refresh_token)
+        return results
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))

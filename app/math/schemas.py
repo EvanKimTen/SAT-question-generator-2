@@ -277,7 +277,7 @@ class SolutionWithChoices(BaseModel):
     choice_b: Optional[str]
     choice_c: Optional[str]
     choice_d: Optional[str]
-    correct_choice: Optional[str]
+    answer: Optional[str]
     solution: Optional[str]
 
 
@@ -288,7 +288,7 @@ class CompleteGeneratedQuestion(BaseModel):
     choice_b: Optional[str]
     choice_c: Optional[str]
     choice_d: Optional[str]
-    correct_choice: Optional[str]
+    answer: Optional[str]
 
 
 class CompleteProblemSet(BaseModel):

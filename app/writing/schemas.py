@@ -65,7 +65,7 @@ class SolutionWithChoices(BaseModel):
     choice_b: str
     choice_c: str
     choice_d: str
-    correct_choice: str
+    answer: str
     solution: str
 
 
@@ -76,7 +76,7 @@ class CompleteGeneratedQuestion(BaseModel):
     choice_b: str
     choice_c: str
     choice_d: str
-    correct_choice: str
+    answer: str
     explanation: str
 
 
