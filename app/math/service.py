@@ -38,12 +38,37 @@ async def generate_problems(
             example_question = "No example question found"
         else:
             example_question = random.choice(category_questions)
-
+        display_id = ""
+        display_id = display_id + "A" + str(2) # 1st digit: Math
+        list_diff = ["M1", "M2E", "M2H"]
+        assigned_random_diff = random.choice(list_diff) 
+        # There seemed to be no criteria for determining that difficulty --> takes the randomly chosen one
+        if assigned_random_diff == "M1":
+            display_id = display_id + str(1)
+        elif assigned_random_diff == "M2E":
+            display_id = display_id + str(2)
+        elif assigned_random_diff == "M2H":
+            display_id = display_id + str(3)
+        # Assuming that I've added additional cols named module and subject to the probs table.
+        # --> will address it later on the next push probably.
+        problems_subject_and_module = (
+            supabase.table("problems").select("*").match({'subject': "MATH",'module': assigned_random_diff}).execute()
+            ).data
+        last_digit_field = len(problems_subject_and_module)
+        if last_digit_field < 10:
+            display_id = display_id + f"000{last_digit_field}"
+        elif last_digit_field < 100:
+            display_id = display_id + f"00{last_digit_field}"
+        elif last_digit_field < 1000:
+            display_id = display_id + f"0{last_digit_field}"
+        elif last_digit_field < 10000:
+            display_id = display_id + f"{last_digit_field}"
         categories_string = await generate_category_string(data.category_ids, supabase)
         generated_question = generate_sat_question(
             categories=categories_string,
             example_question=example_question,
             question_type=question_type,
+            display_id = display_id
         )
         solution_with_choices = solve_question(
             example_question=example_question,
@@ -64,6 +89,7 @@ async def generate_problems(
             passage_dict | complete_generated_question_dict
         )
         complete_generated_question_dict["user_id"] = user_id
+        complete_generated_question_dict["display_id"] = display_id
         generated_problem = (
             supabase.table("problems")
             .insert(complete_generated_question_dict)

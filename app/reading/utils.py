@@ -49,6 +49,7 @@ async def generate_sat_question(
     category_id: str,
     example_question: str,
     user_id: str,
+    display_id: str
     selection_passage_example: str = None,
 ) -> CompleteGeneratedQuestion:
     """
@@ -96,6 +97,8 @@ async def generate_sat_question(
 
     res_dict["passage"] = selected_passage
     res_dict["user_id"] = user_id
+    res_dict["display_id"] = display_id
+    
 
     generated_problem = (
         supabase.table("problems").insert(res_dict).execute()

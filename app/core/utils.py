@@ -29,11 +29,11 @@ async def fetch_problems_by_category_ids(category_ids: list):
     problems_ids_data = problems_ids.data
     questions = []
 
-    for category_id in problems_ids_data:
+    for problem in problems_ids_data:
         for category_id_l in problem_category_id_list:
-            if category_id["id"] == category_id_l:
-                if category_id not in questions:
-                    questions.append(category_id)
+            if problem["id"] == category_id_l:
+                if problem not in questions:
+                    questions.append(problem)
 
     return questions
 

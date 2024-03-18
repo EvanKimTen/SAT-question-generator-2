@@ -13,7 +13,7 @@ from app.core.utils import (
     get_problem_ids_by_category_ids,
 )
 from typing import List
-
+import random
 
 async def generate_problems(
     data: GenerateSimilarQuestionRequest,
@@ -29,12 +29,37 @@ async def generate_problems(
     category_questions = await fetch_problems_by_category_ids(
         [data.category_id]
     )
-
+    display_id = ""
+    display_id = display_id + "A" + str(1) # 1st digit
+    list_diff = ["M1", "M2E", "M2H"]
+    assigned_random_diff = random.choice(list_diff) 
+    # There seemed to be no criteria for determining that difficulty --> takes the randomly chosen one
+    if assigned_random_diff == "M1":
+        display_id = display_id + str(1)
+    elif assigned_random_diff == "M2E":
+        display_id = display_id + str(2)
+    elif assigned_random_diff == "M2H":
+        display_id = display_id + str(3)
+    # Assuming that I've added additional cols named module and subject to the probs table.
+    # --> will address it later on the next push probably.
+    problems_subject_and_module = (
+        supabase.table("problems").select("*").match({'subject': "ENGLISH",'module': assigned_random_diff}).execute()
+        ).data
+    last_digit_field = len(problems_subject_and_module)
+    if last_digit_field < 10:
+        display_id = display_id + f"000{last_digit_field}"
+    elif last_digit_field < 100:
+        display_id = display_id + f"00{last_digit_field}"
+    elif last_digit_field < 1000:
+        display_id = display_id + f"0{last_digit_field}"
+    elif last_digit_field < 10000:
+        display_id = display_id + f"{last_digit_field}"
     for _ in range(question_count):
         generated_question = await generate_sat_question(
             category_id=data.category_id,
             example_question=category_questions,
-            user_id=user_id
+            user_id=user_id,
+            display_id=display_id
             # got an error here for empty seq --> need to generate more.
         )
 
