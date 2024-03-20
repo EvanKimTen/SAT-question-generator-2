@@ -45,10 +45,10 @@ async def generate_sat_question(
     output_dict = output.dict()["content"]
     output_dict = json.loads(output_dict)
     output_dict["user_id"] = user_id
-    # print(output_dict)
+
     # get the id of the generated question and insert it into the problem_problem_categories table.
     generated_problem = (
-        supabase.table("problems").select("*").match(output_dict).execute()
+        supabase.table("problems").insert(output_dict).execute()
     )  
     
     # using this table for experiment and be adjusted for the correct one

@@ -68,6 +68,7 @@ async def generate_problems(
             categories=categories_string,
             example_question=example_question,
             question_type=question_type,
+            display_id = display_id
         )
         solution_with_choices = solve_question(
             example_question=example_question,
